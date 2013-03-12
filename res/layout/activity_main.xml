@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.zhangxaochen.huaweiproj.MyRelativeLayout
+        android:id="@+id/relativeLayoutEnableCD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/my_border"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/buttonEnableCD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="on_buttonEnableCD_clicked"
+            android:text="@string/buttonEnableCD" />
+
+        <EditText
+            android:id="@+id/editTextCD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/buttonEnableCD"
+            android:ems="10"
+            android:inputType="number" />
+
+        <Spinner
+            android:id="@+id/spinnerSampleRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewSampleRate"
+            android:layout_below="@+id/textViewSampleRate"
+            android:entries="@array/sampleRates"
+            android:prompt="@string/hello_world" />
+
+        <TextView
+            android:id="@+id/textViewSampleRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/buttonEnableCD"
+            android:layout_below="@+id/buttonEnableCD"
+            android:layout_marginTop="15dp"
+            android:text="@string/textViewSampleRate"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/spinnerSampleMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/TextView01"
+            android:layout_below="@+id/TextView01"
+            android:entries="@array/actionModes" />
+
+        <EditText
+            android:id="@+id/editTextOperator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textView1"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="第一弹" />
+
+        <TextView
+            android:id="@+id/textViewFnameHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editTextOperator"
+            android:layout_centerHorizontal="true"
+            android:background="#afa"
+            android:text="Large Text" />
+
+        <Button
+            android:id="@+id/buttonSaveAndClear"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewFnameHint"
+            android:layout_below="@+id/textViewFnameHint"
+            android:layout_marginTop="14dp"
+            android:onClick="on_buttonSaveAndClear_clicked"
+            android:text="@string/buttonSaveAndClear" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/spinnerSampleMode"
+            android:layout_below="@+id/spinnerSampleMode"
+            android:text="操作员：" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/spinnerSampleRate"
+            android:layout_below="@+id/spinnerSampleRate"
+            android:layout_marginTop="14dp"
+            android:text="@string/textViewSampleMode"
+            android:textSize="16sp" />
+
+    </com.zhangxaochen.huaweiproj.MyRelativeLayout>
+
+    <ToggleButton
+        android:id="@+id/toggleButtonSampling"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayoutEnableCD"
+        android:onClick="on_toggleButtonSampling_clicked"
+        android:textOff="@string/samplingOff"
+        android:textOn="@string/samplingOn" />
+
+</RelativeLayout>
