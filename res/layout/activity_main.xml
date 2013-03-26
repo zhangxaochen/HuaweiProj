@@ -65,7 +65,7 @@
             android:layout_below="@+id/textView1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="第一弹" />
+            android:text="Lily" />
 
         <TextView
             android:id="@+id/textViewFnameHint"

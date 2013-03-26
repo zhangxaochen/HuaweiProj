@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:title="test">
+
+    <RadioGroup
+        android:id="@+id/radioGroupDrive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal" >
+
+        <RadioButton
+            android:id="@+id/radioDriveAccelerate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="加速" />
+
+        <RadioButton
+            android:id="@+id/radioDriveDecelerate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="减速" />
+
+        <RadioButton
+            android:id="@+id/radioDriveTurn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="转弯" />
+
+        <RadioButton
+            android:id="@+id/radioDriveOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="其他" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textViewDriveOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/radioGroupDrive"
+        android:enabled="false"
+        android:text="[其他]必填："
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editTextDriveOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroupDrive"
+        android:layout_toRightOf="@id/textViewDriveOther"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textPersonName" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/buttonDriveOK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editTextDriveOther"
+        android:layout_marginTop="22dp"
+        android:enabled="false"
+        android:text="OK" />
+
+</RelativeLayout>

@@ -9,12 +9,19 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -31,6 +38,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,8 +52,12 @@ import com.zhangxaochen.xmlParser.CaptureSessionNode;
 
 @SuppressLint("NewApi")
 public class HuaweiProj extends Activity {
+	private String _driveSubFname = "";
+	Dialog _drivingSubDlg;
+	RadioGroup _rgDrive;
+
 	private String _debugInfo;
-	
+
 	// intent putExtra keys:
 	public static final String kSampleRate = "sampleRate";
 
@@ -69,7 +83,6 @@ public class HuaweiProj extends Activity {
 			try {
 				_persister.write(_captureSessionNode, _file);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
@@ -106,7 +119,6 @@ public class HuaweiProj extends Activity {
 																// /mnt/sdcard/huawei.xml
 
 	CaptureSessionNode _captureSessionNode = new CaptureSessionNode();
-	// File _file = new File(_fileName);
 	File _file;
 	Format _format = new Format("<?xml version=\"1.0\" encoding= \"UTF-8\" ?>");
 	Persister _persister = new Persister(_format);
@@ -146,7 +158,104 @@ public class HuaweiProj extends Activity {
 
 	// UI 组件实例化
 	void initWidgets() {
+		// ---------------------------driving_sub_dlg 对话框，2013年3月26日添加
+		_drivingSubDlg = new Dialog(HuaweiProj.this) {
+			private void initDlg() {
+//				RadioGroup rgDrive = (RadioGroup) findViewById(R.id.radioGroupDrive);
+				_rgDrive = (RadioGroup) findViewById(R.id.radioGroupDrive);
+				_rgDrive.clearCheck(); // √
+				final RadioButton rbDriveAcc = (RadioButton) findViewById(R.id.radioDriveAccelerate);
+				final RadioButton rbDriveDec = (RadioButton) findViewById(R.id.radioDriveDecelerate);
+				final RadioButton rbDriveTurn = (RadioButton) findViewById(R.id.radioDriveTurn);
+				final RadioButton rbDriveOther = (RadioButton) findViewById(R.id.radioDriveOther);
+				// rbDriveOther.setChecked(true);
+				final EditText editTextDriveOther = (EditText) findViewById(R.id.editTextDriveOther);
+				final Button btnOk = (Button) findViewById(R.id.buttonDriveOK);
 
+				btnOk.setOnClickListener(new View.OnClickListener() {
+
+					public void onClick(View v) {
+						_drivingSubDlg.dismiss();
+					}
+				});
+
+				_rgDrive.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+						System.out.println("rgDrive: onCheckedChanged");
+
+						if (checkedId != rbDriveOther.getId()) {
+							findViewById(R.id.textViewDriveOther).setEnabled(
+									false);
+							editTextDriveOther.setEnabled(false);
+							btnOk.setEnabled(true);
+
+							if (checkedId == rbDriveAcc.getId())
+								_driveSubFname = "accelerate";
+							else if (checkedId == rbDriveDec.getId())
+								_driveSubFname = "decelerate";
+							else if (checkedId == rbDriveTurn.getId())
+								_driveSubFname = "turn";
+						} else if (checkedId == rbDriveOther.getId()) {
+							findViewById(R.id.textViewDriveOther).setEnabled(
+									true);
+							editTextDriveOther.setEnabled(true);
+							if (editTextDriveOther.getText().length() == 0)
+								btnOk.setEnabled(false);
+						}
+						_fileName = _spinnerSampleMode.getSelectedItem()
+								.toString()
+								+ "_"
+								+ _editTextOperator.getText()
+								+ "_" + _driveSubFname + ".xml";
+
+						_textViewFnameHint.setText(_fnameHintStub + _fileName);
+						_fileName = _dataFolder.getAbsolutePath()
+								+ File.separator + _fileName;
+						System.out.println("_fileName: " + _fileName);
+
+					} // onCheckedChanged
+				});
+
+				editTextDriveOther.addTextChangedListener(new TextWatcher() {
+
+					public void onTextChanged(CharSequence s, int start,
+							int before, int count) {
+						_driveSubFname = s.toString();
+						if (s.length() == 0) {
+							btnOk.setEnabled(false);
+						} else {
+							btnOk.setEnabled(true);
+						}
+					}
+
+					public void beforeTextChanged(CharSequence s, int start,
+							int count, int after) {
+					}
+
+					public void afterTextChanged(Editable s) {
+					}
+				});
+			} // initDlg
+
+			@Override
+			protected void onCreate(Bundle savedInstanceState) {
+				super.onCreate(savedInstanceState);
+				setContentView(R.layout.driving_sub_dlg);
+				initDlg();
+			} // onCreate
+		};
+//		_drivingSubDlg.setCanceledOnTouchOutside(false);
+		_drivingSubDlg.setCancelable(false);
+		_drivingSubDlg.setOnShowListener(new OnShowListener() {
+			
+			public void onShow(DialogInterface dialog) {
+//				RadioGroup rgDrive=(RadioGroup)findViewById(R.id.radioGroupDrive); //×, 必须设成全局
+				_rgDrive.clearCheck();
+			}
+		});
+
+		// ======================================================
 		_editTextCD = (EditText) findViewById(R.id.editTextCD);
 		_editTextCD.setText("0");
 		_editTextCD.setEnabled(_isCdEnabled);
@@ -184,8 +293,9 @@ public class HuaweiProj extends Activity {
 		// .show();
 
 		_editTextOperator = (EditText) findViewById(R.id.editTextOperator);
+		_editTextOperator.setSelectAllOnFocus(true);
 		_textViewFnameHint = (TextView) findViewById(R.id.textViewFnameHint);
-	}
+	} // initWidgets
 
 	// 各种事件响应
 	void respondEvents() {
@@ -249,22 +359,34 @@ public class HuaweiProj extends Activity {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 
-//						File dataFolder = Environment
-//								.getExternalStoragePublicDirectory(_dataFolderName);
-//						if (!dataFolder.exists()) {
-//							System.out
-//									.println("!dataFolder.exists()-----------------------");
-//							dataFolder.mkdirs();
-//						}
-						_fileName = parent.getSelectedItem().toString()
-								+ "_"+_editTextOperator.getText() + ".xml";
+						// File dataFolder = Environment
+						// .getExternalStoragePublicDirectory(_dataFolderName);
+						// if (!dataFolder.exists()) {
+						// System.out
+						// .println("!dataFolder.exists()-----------------------");
+						// dataFolder.mkdirs();
+						// }
+						String prefix = parent.getSelectedItem().toString();
+						if (prefix.equals("driving")) {
+//							RadioGroup rgDrive=(RadioGroup) findViewById(R.id.radioGroupDrive);
+//							rgDrive.clearCheck(); //每次clear
+							
+							_drivingSubDlg.show();
+						}
+						_fileName = prefix + "_" + _editTextOperator.getText()
+								+ ".xml";
+						// _fileName = prefix + "_" +
+						// _editTextOperator.getText();
+						// if (!_driveSubFname.equals(""))
+						// _fileName += "_" + _driveSubFname;
+						// _fileName += ".xml";
 						_textViewFnameHint.setText(_fnameHintStub + _fileName);
 
 						_fileName = _dataFolder.getAbsolutePath()
 								+ File.separator + _fileName;
 						System.out.println("_fileName: " + _fileName);
 
-						_file = new File(_fileName);
+						// _file = new File(_fileName);
 
 					}
 
@@ -279,16 +401,20 @@ public class HuaweiProj extends Activity {
 					int count) {
 				System.out.println("s, start, before, count:= " + s + ", "
 						+ start + ", " + before + ", " + count);
-				
-				_fileName=_spinnerSampleMode.getSelectedItem().toString()+"_"+s+".xml";
+
+				String prefix=_spinnerSampleMode.getSelectedItem().toString();
+				_fileName = prefix + "_" + s;
+				if (!_driveSubFname.equals("") && prefix.equals("driving"))
+					_fileName += "_" + _driveSubFname;
+				_fileName += ".xml";
 				_textViewFnameHint.setText(_fnameHintStub + _fileName);
-				_fileName = _dataFolder.getAbsolutePath()
-						+ File.separator + _fileName;
+				_fileName = _dataFolder.getAbsolutePath() + File.separator
+						+ _fileName;
 				System.out.println("_fileName: " + _fileName);
 
-				_file = new File(_fileName);
+				// _file = new File(_fileName);
 
-//				_textViewFnameHint.setText(_fnameHintStub+)
+				// _textViewFnameHint.setText(_fnameHintStub+)
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -296,6 +422,7 @@ public class HuaweiProj extends Activity {
 			}
 
 			public void afterTextChanged(Editable s) {
+				System.out.println("_editTextOperator: afterTextChanged");
 			}
 		});
 
@@ -305,10 +432,14 @@ public class HuaweiProj extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		System.out.println("onCreate");
 
+		// new Dialog(this).show(); //没按钮
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		getActionBar().setHomeButtonEnabled(true);
-		// getActionBar().setDisplayHomeAsUpEnabled(true); //区别在于左侧会多一个小箭头
+
+		int ver = Build.VERSION.SDK_INT;
+		System.out.println("version: " + ver);
+		// Build.VERSION_CODES.JELLY_BEAN;
 
 		_dataFolder = Environment
 				.getExternalStoragePublicDirectory(_dataFolderName);
@@ -321,7 +452,6 @@ public class HuaweiProj extends Activity {
 		respondEvents();
 
 		_sm = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-		// _file = new File(_fileName);
 
 	}// onCreate
 
@@ -436,6 +566,7 @@ public class HuaweiProj extends Activity {
 		System.out.println("on_buttonSaveAndClear_clicked");
 
 		_savingDlg.show();
+		_file = new File(_fileName);
 		new WriteXmlTask().execute();
 	}
 
@@ -484,21 +615,39 @@ public class HuaweiProj extends Activity {
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
 
-		MySensorData mySensorData=_listener.getSensorData();
-//		System.out.println("abuf: "+mySensorData.getAbuf().size());
-//		System.out.println("mbuf: "+mySensorData.getMbuf().size());
-//		System.out.println("gbuf: "+mySensorData.getGbuf().size());
-//		System.out.println("rbuf: "+mySensorData.getRbuf().size());
-		_debugInfo=
-		"abuf:\t"+mySensorData.getAbuf().size()+"\n"+
-		"mbuf:\t"+mySensorData.getMbuf().size()+"\n"+
-		"gbuf:\t"+mySensorData.getGbuf().size()+"\n"+
-		"rbuf:\t"+mySensorData.getRbuf().size()+"\n";
+		final MySensorData mySensorData = _listener.getSensorData();
+		// System.out.println("abuf: "+mySensorData.getAbuf().size());
+		// System.out.println("mbuf: "+mySensorData.getMbuf().size());
+		// System.out.println("gbuf: "+mySensorData.getGbuf().size());
+		// System.out.println("rbuf: "+mySensorData.getRbuf().size());
+		_debugInfo = "abuf:\t" + mySensorData.getAbuf().size() + "\n"
+				+ "mbuf:\t" + mySensorData.getMbuf().size() + "\n" + "gbuf:\t"
+				+ mySensorData.getGbuf().size() + "\n" + "rbuf:\t"
+				+ mySensorData.getRbuf().size() + "\n";
 
-		
+		AlertDialog.Builder builder=new AlertDialog.Builder(this);
+		builder.setTitle("是否保存本次数据")
+		.setCancelable(false)
+		.setPositiveButton("保存", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// 加一条数据，（还没存文件）
+				_captureSessionNode.addNode(mySensorData);
+				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+			}
+		})
+		.setNegativeButton("放弃", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+			}
+		} );
+		Dialog addNodeDlg=builder.create();
+		addNodeDlg.show();
+
 		// 加一条数据，（还没存文件）
-		_captureSessionNode.addNode(mySensorData);
-		mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+//		_captureSessionNode.addNode(mySensorData);
+//		mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 
 	}
 
@@ -517,9 +666,11 @@ public class HuaweiProj extends Activity {
 		_relativeLayoutEnableCD.disablePanel();
 		// _relativeLayoutSampleRate.disablePanel();
 
-		ActionBar bar = getActionBar();
-		bar.setDisplayShowHomeEnabled(false);
-		bar.setDisplayShowCustomEnabled(false);
+		if (VERSION.SDK_INT > VERSION_CODES.HONEYCOMB) {
+			ActionBar bar = getActionBar();
+			bar.setDisplayShowHomeEnabled(false);
+			bar.setDisplayShowCustomEnabled(false);
+		}
 	}
 
 	@Override
@@ -528,7 +679,7 @@ public class HuaweiProj extends Activity {
 		System.out.println("onBackPressed");
 
 		long curTime = SystemClock.uptimeMillis();
-		
+
 		System.out.println("curTime:= " + curTime);
 
 		if (curTime - _exitTimeStamp < 1000) {
