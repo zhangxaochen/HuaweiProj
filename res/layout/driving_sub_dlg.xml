@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:title="test">
+    android:layout_height="match_parent"
+    android:title="test" >
+
+    <RadioGroup
+        android:id="@+id/radioGroupDp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radioDpDriver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="驾驶员" />
+
+        <RadioButton
+            android:id="@+id/radioDpPassenger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="一般乘客" />
+    </RadioGroup>
 
     <RadioGroup
         android:id="@+id/radioGroupDrive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@id/radioGroupDp"
         android:gravity="center_horizontal" >
 
         <RadioButton

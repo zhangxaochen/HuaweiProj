@@ -11,7 +11,7 @@ public final class R {
 		public static final int radioGroupSensorRate = 0x7f08000e;
 		public static final int radioButtonSensorGame = 0x7f080010;
 		public static final int radioButtonSensorUi = 0x7f080011;
-		public static final int menu_settings = 0x7f080023;
+		public static final int menu_settings = 0x7f080026;
 		public static final int radioButtonSensorFastest = 0x7f08000f;
 		public static final int myView = 0x7f080012;
 	}

@@ -52,9 +52,12 @@ import com.zhangxaochen.xmlParser.CaptureSessionNode;
 
 @SuppressLint("NewApi")
 public class HuaweiProj extends Activity {
+	private String _driveDpString="";
 	private String _driveSubFname = "";
 	Dialog _drivingSubDlg;
 	RadioGroup _rgDrive;
+	RadioGroup _rgDp;
+
 
 	private String _debugInfo;
 
@@ -160,7 +163,14 @@ public class HuaweiProj extends Activity {
 	void initWidgets() {
 		// ---------------------------driving_sub_dlg 对话框，2013年3月26日添加
 		_drivingSubDlg = new Dialog(HuaweiProj.this) {
+
 			private void initDlg() {
+				_rgDp=(RadioGroup) findViewById(R.id.radioGroupDp);
+				_rgDp.clearCheck();
+				final RadioButton rbDpDriver=(RadioButton) findViewById(R.id.radioDpDriver);
+				final RadioButton rbDpPassenger=(RadioButton) findViewById(R.id.radioDpPassenger);
+				
+				
 //				RadioGroup rgDrive = (RadioGroup) findViewById(R.id.radioGroupDrive);
 				_rgDrive = (RadioGroup) findViewById(R.id.radioGroupDrive);
 				_rgDrive.clearCheck(); // √
@@ -176,7 +186,36 @@ public class HuaweiProj extends Activity {
 
 					public void onClick(View v) {
 						_drivingSubDlg.dismiss();
+				
+						_fileName = _spinnerSampleMode.getSelectedItem()
+								.toString()
+								+ "_"
+								+ _editTextOperator.getText()
+								+ "_" +_driveDpString+"_"+ _driveSubFname + ".xml";
+
+						_textViewFnameHint.setText(_fnameHintStub + _fileName);
+						_fileName = _dataFolder.getAbsolutePath()
+								+ File.separator + _fileName;
+						System.out.println("_fileName: " + _fileName);
+
 					}
+				});
+
+				_rgDp.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+						System.out.println("_rgDp: onCheckedChanged");
+						
+						if(checkedId==rbDpDriver.getId())
+							_driveDpString="driver";
+						else if(checkedId==rbDpPassenger.getId())
+							_driveDpString="passenger";
+						
+						if(_rgDrive.getCheckedRadioButtonId()!=-1)
+							btnOk.setEnabled(true);
+						
+
+					} //onCheckedChanged
 				});
 
 				_rgDrive.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -188,7 +227,8 @@ public class HuaweiProj extends Activity {
 							findViewById(R.id.textViewDriveOther).setEnabled(
 									false);
 							editTextDriveOther.setEnabled(false);
-							btnOk.setEnabled(true);
+							if (_rgDp.getCheckedRadioButtonId() != -1)
+								btnOk.setEnabled(true);
 
 							if (checkedId == rbDriveAcc.getId())
 								_driveSubFname = "accelerate";
@@ -203,16 +243,16 @@ public class HuaweiProj extends Activity {
 							if (editTextDriveOther.getText().length() == 0)
 								btnOk.setEnabled(false);
 						}
-						_fileName = _spinnerSampleMode.getSelectedItem()
-								.toString()
-								+ "_"
-								+ _editTextOperator.getText()
-								+ "_" + _driveSubFname + ".xml";
-
-						_textViewFnameHint.setText(_fnameHintStub + _fileName);
-						_fileName = _dataFolder.getAbsolutePath()
-								+ File.separator + _fileName;
-						System.out.println("_fileName: " + _fileName);
+//						_fileName = _spinnerSampleMode.getSelectedItem()
+//								.toString()
+//								+ "_"
+//								+ _editTextOperator.getText()
+//								+ "_" + _driveSubFname + ".xml";
+//
+//						_textViewFnameHint.setText(_fnameHintStub + _fileName);
+//						_fileName = _dataFolder.getAbsolutePath()
+//								+ File.separator + _fileName;
+//						System.out.println("_fileName: " + _fileName);
 
 					} // onCheckedChanged
 				});
@@ -240,18 +280,22 @@ public class HuaweiProj extends Activity {
 
 			@Override
 			protected void onCreate(Bundle savedInstanceState) {
+				System.out.println("_drivingSubDlg: onCreate");
+				
 				super.onCreate(savedInstanceState);
 				setContentView(R.layout.driving_sub_dlg);
 				initDlg();
 			} // onCreate
 		};
 //		_drivingSubDlg.setCanceledOnTouchOutside(false);
+		_drivingSubDlg.setTitle("驾驶模式设置");
 		_drivingSubDlg.setCancelable(false);
 		_drivingSubDlg.setOnShowListener(new OnShowListener() {
 			
 			public void onShow(DialogInterface dialog) {
 //				RadioGroup rgDrive=(RadioGroup)findViewById(R.id.radioGroupDrive); //×, 必须设成全局
-				_rgDrive.clearCheck();
+//				_rgDrive.clearCheck(); //会导致 checkChanged
+//				_rgDp.clearCheck();
 			}
 		});
 
@@ -369,7 +413,7 @@ public class HuaweiProj extends Activity {
 						String prefix = parent.getSelectedItem().toString();
 						if (prefix.equals("driving")) {
 //							RadioGroup rgDrive=(RadioGroup) findViewById(R.id.radioGroupDrive);
-//							rgDrive.clearCheck(); //每次clear
+//							_rgDrive.clearCheck(); //每次clear
 							
 							_drivingSubDlg.show();
 						}
@@ -404,8 +448,10 @@ public class HuaweiProj extends Activity {
 
 				String prefix=_spinnerSampleMode.getSelectedItem().toString();
 				_fileName = prefix + "_" + s;
-				if (!_driveSubFname.equals("") && prefix.equals("driving"))
-					_fileName += "_" + _driveSubFname;
+//				if (!_driveSubFname.equals("") && prefix.equals("driving")){
+				if (prefix.equals("driving")) {
+					_fileName += "_" +_driveDpString +"_"+_driveSubFname;
+				}
 				_fileName += ".xml";
 				_textViewFnameHint.setText(_fnameHintStub + _fileName);
 				_fileName = _dataFolder.getAbsolutePath() + File.separator

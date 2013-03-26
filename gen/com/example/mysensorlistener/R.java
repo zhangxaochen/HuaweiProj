@@ -13,7 +13,7 @@ public final class R {
 		public static final int scrollView = 0x7f080013;
 		public static final int getBufArrayAndClear = 0x7f080014;
 		public static final int getBufRearBtn = 0x7f080017;
-		public static final int menu_settings = 0x7f080023;
+		public static final int menu_settings = 0x7f080026;
 	}
 	public static final class style {
 		public static final int AppTheme = 0x7f050000;
