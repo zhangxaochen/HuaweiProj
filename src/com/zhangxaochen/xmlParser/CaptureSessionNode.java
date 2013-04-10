@@ -188,7 +188,7 @@ class DataNode {
 	private float Rz = defaultValue;
 	
 	@Attribute
-	private long ts=defaultValue;
+	private long timestamp=defaultValue;
 
 	public float getGx() {
 		return Gx;
@@ -295,11 +295,11 @@ class DataNode {
 	}
 
 	public long getTs() {
-		return ts;
+		return timestamp;
 	}
 
 	public void setTs(long ts) {
-		this.ts = ts;
+		this.timestamp = ts;
 	}
 
 	
