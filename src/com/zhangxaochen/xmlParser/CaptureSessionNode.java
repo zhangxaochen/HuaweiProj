@@ -80,11 +80,17 @@ public class CaptureSessionNode {
 
 			tuple = rbuf.poll();
 			if (tuple != null) {
-				dataNode.setRx(tuple[0]);
-				dataNode.setRy(tuple[1]);
-				dataNode.setRz(tuple[2]);
-				if (tuple.length == 4)
-					dataNode.setRw(tuple[3]);
+				float x=tuple[0],
+						y=tuple[1],
+						z=tuple[2];
+				float w=(float) Math.sqrt(1-x*x-y*y-z*z);
+				
+				dataNode.setRw(w);
+				dataNode.setRx(x);
+				dataNode.setRy(y);
+				dataNode.setRz(z);
+//				if (tuple.length == 4)
+//					dataNode.setRw(tuple[3]);
 			}else{
 				System.out.println("rbuf!!!!!"+i);
 			}
