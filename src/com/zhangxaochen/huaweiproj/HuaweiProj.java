@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -57,6 +58,10 @@ public class HuaweiProj extends Activity {
 	Dialog _drivingSubDlg;
 	RadioGroup _rgDrive;
 	RadioGroup _rgDp;
+	MediaPlayer _mpTick;
+	MediaPlayer _mpStart;
+	MediaPlayer _mpStop;
+
 
 
 	private String _debugInfo;
@@ -499,6 +504,10 @@ public class HuaweiProj extends Activity {
 
 		_sm = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
 
+		_mpTick=MediaPlayer.create(this, R.raw.tick);
+		_mpStart=MediaPlayer.create(this, R.raw.start);
+		_mpStop=MediaPlayer.create(this, R.raw.stop);
+		
 	}// onCreate
 
 	@Override
