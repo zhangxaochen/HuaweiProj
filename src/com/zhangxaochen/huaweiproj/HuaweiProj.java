@@ -596,6 +596,7 @@ public class HuaweiProj extends Activity {
 			System.out.println("R.id.menuItemViewXml");
 
 			System.out.println(_fileName);
+			_file=new File(_fileName);
 			System.out.println("_file.exists():= " + _file.exists());
 
 			// 用默认程序打开 xml:
