@@ -1,6 +1,7 @@
 package com.zhangxaochen.huaweiproj;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.stream.Format;
@@ -14,9 +15,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -42,6 +47,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -507,8 +514,29 @@ public class HuaweiProj extends Activity {
 		_mpTick=MediaPlayer.create(this, R.raw.tick);
 		_mpStart=MediaPlayer.create(this, R.raw.start);
 		_mpStop=MediaPlayer.create(this, R.raw.stop);
+		try {
+			_mpTick.prepare();
+			_mpStart.prepare();
+			_mpStop.prepare();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		AudioManager am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		am.setStreamVolume(AudioManager.STREAM_MUSIC, 10, 0);
 		
 	}// onCreate
+
+	@Override
+	protected void onDestroy() {
+		_mpStart.release();
+		_mpStop.release();
+		_mpTick.release();
+
+		super.onDestroy();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -528,7 +556,17 @@ public class HuaweiProj extends Activity {
 			System.out.println("android.R.id.home");
 			break;
 		case R.id.menu_settings:
-			Toast.makeText(this, "no settings~~", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "no settings~~", Toast.LENGTH_SHORT).show();
+			SettingsDlg settingsDlg=new SettingsDlg(this);
+			settingsDlg.setOnDismissListener(new OnDismissListener() {
+				
+				public void onDismiss(DialogInterface dialog) {
+//					Toast.makeText(HuaweiProj.this, "settingsDlg...onDismiss", Toast.LENGTH_SHORT).show();
+					
+				}
+			});
+			settingsDlg.setTitle(R.string.settingsTitle);
+			settingsDlg.show();
 			break;
 		case R.id.menu_about:
 			Dialog aboutDlg = new Dialog(this) {
@@ -631,34 +669,31 @@ public class HuaweiProj extends Activity {
 		boolean isOn = _toggleButtonSampling.isChecked();
 		// System.out.println("isOn:= "+isOn); //进回调之前系统已经 on/off 了
 		if (isOn) {
-			uiStartSampling();
-			_listener.registerWithSensorManager(_sm, aMillion / _rate);
-
-			if (_isCdEnabled) {
-				// 秒：
-				_cdDuration = Integer
-						.parseInt(_editTextCD.getText().toString());
-
-				// +30ms， 弥补CountDownTimer 的bug：
-				_timer = new CountDownTimer(_cdDuration * 1000 + 30, 1000) {
-
-					@Override
-					public void onTick(long millisUntilFinished) {
-						_editTextCD.setText("" + millisUntilFinished / 1000);
-					}
-
-					@Override
-					public void onFinish() {
-						System.out.println("onFinish");
-
-						stopSampling();
-					}
-				};
-				_timer.start();
-
-			}
-
+			final Dialog tickDlg=new Dialog(this);
+			tickDlg.setContentView(R.layout.saving_dlg);
+			tickDlg.setTitle("tick-tick");
+			tickDlg.setCancelable(false);
+			tickDlg.show();
+			
+			SharedPreferences sp=this.getSharedPreferences(Consts.prefSettings, MODE_PRIVATE);
+			int preCd=sp.getInt(Consts.kPreCd, 0);
+			CountDownTimer preTimer=new CountDownTimer(preCd*1000+50, 1000) {
+				
+				@Override
+				public void onTick(long millisUntilFinished) {
+					_mpTick.start();
+				}
+				
+				@Override
+				public void onFinish() {
+					tickDlg.dismiss();
+					startSampling();
+				}
+			};
+			preTimer.start();
+			
 		} else { // !isOn
+			
 			stopSampling();
 
 			if (_isCdEnabled)
@@ -667,6 +702,7 @@ public class HuaweiProj extends Activity {
 	}// on_toggleButtonSampling_clicked
 
 	private void stopSampling() {
+		_mpStop.start();	//停止音乐
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
 
@@ -716,6 +752,37 @@ public class HuaweiProj extends Activity {
 
 	}
 
+	private void startSampling(){
+		_mpStart.start();
+		uiStartSampling();
+		_listener.registerWithSensorManager(_sm, aMillion / _rate);
+
+		if (_isCdEnabled) {
+			// 秒：
+			_cdDuration = Integer
+					.parseInt(_editTextCD.getText().toString());
+
+			// +30ms， 弥补CountDownTimer 的bug：
+			_timer = new CountDownTimer(_cdDuration * 1000 + 30, 1000) {
+
+				@Override
+				public void onTick(long millisUntilFinished) {
+					_editTextCD.setText("" + millisUntilFinished / 1000);
+				}
+
+				@Override
+				public void onFinish() {
+					System.out.println("onFinish");
+
+					stopSampling();
+				}
+			};
+			_timer.start();
+
+		}
+
+	}
+	
 	private void uiStartSampling() {
 		// 采样时disable闲杂组件
 		_relativeLayoutEnableCD.disablePanel();
