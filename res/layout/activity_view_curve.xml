@@ -10,7 +10,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:entries="@array/sensorList" />
-
+
+
     <view
         android:id="@+id/viewCurve"
         android:layout_width="wrap_content"

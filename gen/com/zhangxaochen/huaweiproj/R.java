@@ -9,9 +9,9 @@ package com.zhangxaochen.huaweiproj;
 
 public final class R {
     public static final class array {
-        public static final int actionModes=0x7f060002;
-        public static final int sampleRates=0x7f060000;
-        public static final int sensorList=0x7f060001;
+        public static final int actionModes=0x7f070002;
+        public static final int sampleRates=0x7f070000;
+        public static final int sensorList=0x7f070001;
     }
     public static final class attr {
     }
@@ -25,50 +25,54 @@ public final class R {
         public static final int my_border=0x7f020006;
     }
     public static final class id {
-        public static final int TextView01=0x7f080008;
-        public static final int buttonDriveOK=0x7f080024;
-        public static final int buttonEnableCD=0x7f080003;
-        public static final int buttonSaveAndClear=0x7f08000c;
-        public static final int editTextCD=0x7f080004;
-        public static final int editTextDriveOther=0x7f080023;
-        public static final int editTextOperator=0x7f080009;
-        public static final int getBufArrayAndClear=0x7f080014;
-        public static final int getBufFrontBtn=0x7f080016;
-        public static final int getBufRearBtn=0x7f080017;
-        public static final int menuGroup_actionbar=0x7f080027;
-        public static final int menuItemViewCurve=0x7f080029;
-        public static final int menuItemViewXml=0x7f080028;
-        public static final int menu_about=0x7f08002a;
-        public static final int menu_debug=0x7f08002b;
-        public static final int menu_settings=0x7f080026;
-        public static final int myView=0x7f080012;
-        public static final int progressBar1=0x7f080025;
-        public static final int radioButtonSensorFastest=0x7f08000f;
-        public static final int radioButtonSensorGame=0x7f080010;
-        public static final int radioButtonSensorUi=0x7f080011;
-        public static final int radioDpDriver=0x7f08001b;
-        public static final int radioDpPassenger=0x7f08001c;
-        public static final int radioDriveAccelerate=0x7f08001e;
-        public static final int radioDriveDecelerate=0x7f08001f;
-        public static final int radioDriveOther=0x7f080021;
-        public static final int radioDriveTurn=0x7f080020;
-        public static final int radioGroupDp=0x7f08001a;
-        public static final int radioGroupDrive=0x7f08001d;
-        public static final int radioGroupSensorRate=0x7f08000e;
-        public static final int relativeLayoutEnableCD=0x7f080002;
-        public static final int relativeLayoutRoot=0x7f080001;
-        public static final int scrollView=0x7f080013;
-        public static final int spinnerSampleMode=0x7f080007;
-        public static final int spinnerSampleRate=0x7f080005;
-        public static final int spinnerSensorList=0x7f080018;
-        public static final int textView1=0x7f08000a;
-        public static final int textViewAbout=0x7f080000;
-        public static final int textViewDriveOther=0x7f080022;
-        public static final int textViewFnameHint=0x7f08000b;
-        public static final int textViewOutput=0x7f080015;
-        public static final int textViewSampleRate=0x7f080006;
-        public static final int toggleButtonSampling=0x7f08000d;
-        public static final int viewCurve=0x7f080019;
+        public static final int TextView01=0x7f090008;
+        public static final int buttonDriveOK=0x7f090024;
+        public static final int buttonEnableCD=0x7f090003;
+        public static final int buttonSaveAndClear=0x7f09000c;
+        public static final int editTextCD=0x7f090004;
+        public static final int editTextDriveOther=0x7f090023;
+        public static final int editTextOperator=0x7f090009;
+        public static final int getBufArrayAndClear=0x7f090014;
+        public static final int getBufFrontBtn=0x7f090016;
+        public static final int getBufRearBtn=0x7f090017;
+        public static final int menuGroup_actionbar=0x7f09002b;
+        public static final int menuItemViewCurve=0x7f09002d;
+        public static final int menuItemViewXml=0x7f09002c;
+        public static final int menu_about=0x7f09002e;
+        public static final int menu_debug=0x7f09002f;
+        public static final int menu_settings=0x7f09002a;
+        public static final int myView=0x7f090012;
+        public static final int progressBar1=0x7f090025;
+        public static final int radioButtonSensorFastest=0x7f09000f;
+        public static final int radioButtonSensorGame=0x7f090010;
+        public static final int radioButtonSensorUi=0x7f090011;
+        public static final int radioDpDriver=0x7f09001b;
+        public static final int radioDpPassenger=0x7f09001c;
+        public static final int radioDriveAccelerate=0x7f09001e;
+        public static final int radioDriveDecelerate=0x7f09001f;
+        public static final int radioDriveOther=0x7f090021;
+        public static final int radioDriveTurn=0x7f090020;
+        public static final int radioGroupDp=0x7f09001a;
+        public static final int radioGroupDrive=0x7f09001d;
+        public static final int radioGroupSensorRate=0x7f09000e;
+        public static final int relativeLayoutEnableCD=0x7f090002;
+        public static final int relativeLayoutRoot=0x7f090001;
+        public static final int scrollView=0x7f090013;
+        public static final int scrollView1=0x7f090026;
+        public static final int seekBarPreCd=0x7f090029;
+        public static final int spinnerSampleMode=0x7f090007;
+        public static final int spinnerSampleRate=0x7f090005;
+        public static final int spinnerSensorList=0x7f090018;
+        public static final int textView1=0x7f09000a;
+        public static final int textViewAbout=0x7f090000;
+        public static final int textViewDriveOther=0x7f090022;
+        public static final int textViewFnameHint=0x7f09000b;
+        public static final int textViewOutput=0x7f090015;
+        public static final int textViewPreCd=0x7f090027;
+        public static final int textViewSampleRate=0x7f090006;
+        public static final int textViewSeekBarValue=0x7f090028;
+        public static final int toggleButtonSampling=0x7f09000d;
+        public static final int viewCurve=0x7f090019;
     }
     public static final class layout {
         public static final int about_dlg=0x7f030000;
@@ -78,39 +82,46 @@ public final class R {
         public static final int activity_view_curve=0x7f030004;
         public static final int driving_sub_dlg=0x7f030005;
         public static final int saving_dlg=0x7f030006;
+        public static final int settings_dlg=0x7f030007;
     }
     public static final class menu {
-        public static final int activity_main=0x7f070000;
-        public static final int activity_my_sensor=0x7f070001;
-        public static final int activity_my_sensor_listener=0x7f070002;
+        public static final int activity_main=0x7f080000;
+        public static final int activity_my_sensor=0x7f080001;
+        public static final int activity_my_sensor_listener=0x7f080002;
+    }
+    public static final class raw {
+        public static final int start=0x7f040000;
+        public static final int stop=0x7f040001;
+        public static final int tick=0x7f040002;
     }
     public static final class string {
-        public static final int aboutTitle=0x7f040015;
-        public static final int about_text=0x7f040016;
-        public static final int app_name=0x7f040000;
-        public static final int buttonEnableCD=0x7f04000a;
-        public static final int buttonSaveAndClear=0x7f04000e;
-        public static final int getBufArrayAndClear=0x7f040008;
-        public static final int getBufFrontBtn=0x7f040006;
-        public static final int getBufRearBtn=0x7f040007;
-        public static final int getDataBtn=0x7f040005;
-        public static final int hello_world=0x7f040001;
-        public static final int menuViewCurve=0x7f040012;
-        public static final int menuViewXml=0x7f040011;
-        public static final int menu_about=0x7f040014;
-        public static final int menu_debug=0x7f040017;
-        public static final int menu_settings=0x7f040002;
-        public static final int samplingOff=0x7f04000b;
-        public static final int samplingOn=0x7f04000c;
-        public static final int savingTitle=0x7f040010;
-        public static final int textViewSampleMode=0x7f040013;
-        public static final int textViewSampleRate=0x7f04000f;
-        public static final int tipsCD=0x7f04000d;
-        public static final int title_activity_main=0x7f040009;
-        public static final int title_activity_my_sensor=0x7f040003;
-        public static final int title_activity_my_sensor_listener=0x7f040004;
+        public static final int aboutTitle=0x7f050015;
+        public static final int about_text=0x7f050016;
+        public static final int app_name=0x7f050000;
+        public static final int buttonEnableCD=0x7f05000a;
+        public static final int buttonSaveAndClear=0x7f05000e;
+        public static final int getBufArrayAndClear=0x7f050008;
+        public static final int getBufFrontBtn=0x7f050006;
+        public static final int getBufRearBtn=0x7f050007;
+        public static final int getDataBtn=0x7f050005;
+        public static final int hello_world=0x7f050001;
+        public static final int menuViewCurve=0x7f050012;
+        public static final int menuViewXml=0x7f050011;
+        public static final int menu_about=0x7f050014;
+        public static final int menu_debug=0x7f050017;
+        public static final int menu_settings=0x7f050002;
+        public static final int samplingOff=0x7f05000b;
+        public static final int samplingOn=0x7f05000c;
+        public static final int savingTitle=0x7f050010;
+        public static final int settingsTitle=0x7f050018;
+        public static final int textViewSampleMode=0x7f050013;
+        public static final int textViewSampleRate=0x7f05000f;
+        public static final int tipsCD=0x7f05000d;
+        public static final int title_activity_main=0x7f050009;
+        public static final int title_activity_my_sensor=0x7f050003;
+        public static final int title_activity_my_sensor_listener=0x7f050004;
     }
     public static final class style {
-        public static final int AppTheme=0x7f050000;
+        public static final int AppTheme=0x7f060000;
     }
 }
