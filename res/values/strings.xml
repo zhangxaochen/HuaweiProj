@@ -10,7 +10,7 @@
     <string name="tipsCD">Tips:\n    若倒计时开启， 则采样至计时结束，或者手动停止采样</string>
 
     <string-array name="sampleRates">
-        <item>50</item>
+        <item>60</item>
         <item>30</item>
         <item>15</item>
         <item>5</item>
