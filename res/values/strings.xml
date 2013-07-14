@@ -46,5 +46,15 @@
         <string name="about_text">本程序用于离线采集传感器数据，使用说明&lt;a href="http://baidu.com">见这里&lt;/a>。&lt;br/>如需帮助，请联系：zhangxaochen@163.com</string>
         <string name="menu_debug">debug info</string>
         <string name="settingsTitle">程序设置</string>
+        <string name="cn_disabled">已禁用</string>
+        <string name="cn_enabled">已启用</string>
+        <string-array name="drivingActions">
+            <item >启动加速</item>
+            <item >刹车制动</item>
+            <item >转弯</item>
+        </string-array>
+        <string name="cn_started">已启动</string>
+        <string name="cn_stopped">已停止</string>
+        <string-array name="NullArray"></string-array>
 
 </resources>

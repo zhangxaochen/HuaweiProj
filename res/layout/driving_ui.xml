@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#ffefebe7"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp" >
+
+<view
+    class="com.zhangxaochen.huaweiproj.MyRelativeLayout"
+    android:id="@+id/relativeLayoutOptions"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ScrollView
+        android:id="@+id/scrollViewOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewCD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="倒计时（单位：秒）" />
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/more_item_press"
+                android:gravity="fill_vertical" >
+
+                <Switch
+                    android:id="@+id/switchCD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/cn_disabled" />
+
+                <EditText
+                    android:id="@+id/editTextCD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="6"
+                    android:enabled="false"
+                    android:inputType="number"
+                    android:selectAllOnFocus="true" />
+
+            </TableRow>
+
+            <TextView
+                android:id="@+id/textViewPerson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="测试员：" />
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/more_item_press" >
+
+                <Spinner
+                    android:id="@+id/spinnerUser"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:entries="@array/NullArray" />
+
+                <Button
+                    android:id="@+id/buttonAddUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/button_add_user"
+                    android:onClick="on_buttonAddUser_clicked" />
+
+            </TableRow>
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="采样动作：" />
+
+            <Spinner
+                android:id="@+id/spinnerActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/more_item_press"
+                android:entries="@array/drivingActions" />
+
+        </LinearLayout>
+    </ScrollView>
+    
+</view>
+
+    <ToggleButton
+        android:id="@+id/toggleButtonSampling"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayoutOptions"
+        android:layout_marginTop="20dp"
+        android:button="@drawable/add_user"
+        android:textOff="@string/samplingOff"
+        android:textOn="@string/samplingOn" />
+
+</RelativeLayout>
