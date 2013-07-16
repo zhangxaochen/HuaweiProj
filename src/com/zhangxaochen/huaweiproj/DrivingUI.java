@@ -236,15 +236,10 @@ public class DrivingUI extends BaseActivity{
 				_usersSet.add(uname);
 				setUsersSpinner();
 				
-<<<<<<< HEAD
-				_spEditor=_sp.edit();
-				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
-=======
 //				_spEditor=_sp.edit();
 				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
 				_spEditor.remove(Consts.kUsers);
 				_spEditor.commit();//¹ÜÓÃÁË
->>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
 				_spEditor.putStringSet(Consts.kUsers, _usersSet);
 				boolean putSuccess=_spEditor.commit();
 				System.out.println("putSuccess: "+putSuccess);
@@ -445,10 +440,6 @@ public class DrivingUI extends BaseActivity{
 		_spEditor=_sp.edit();
 		
 		_usersSet=_sp.getStringSet(Consts.kUsers, null);
-<<<<<<< HEAD
-=======
-		System.out.println("_sp.getAll(): "+_sp.getAll());
->>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
 		System.out.println("loadPrefs:: _usersSet: "+_usersSet);
 	}
 	
@@ -482,13 +473,6 @@ public class DrivingUI extends BaseActivity{
 		System.out.println("onDestroy================");
 		
 		super.onDestroy();
-<<<<<<< HEAD
-	}
-	
-	
-	
-=======
 	}//onDestroy
->>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
 
 }
