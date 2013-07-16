@@ -59,7 +59,7 @@ import com.example.mysensorlistener.MySensorListener.MySensorData;
 import com.zhangxaochen.xmlParser.CaptureSessionNode;
 
 @SuppressLint("NewApi")
-public class HuaweiProj extends Activity {
+public class HuaweiProj extends BaseActivity{
 	private String _driveDpString="";
 	private String _driveSubFname = "";
 	Dialog _drivingSubDlg;
@@ -69,8 +69,6 @@ public class HuaweiProj extends Activity {
 	MediaPlayer _mpStart;
 	MediaPlayer _mpStop;
 
-
-
 	private String _debugInfo;
 
 	// intent putExtra keys:
@@ -78,52 +76,8 @@ public class HuaweiProj extends Activity {
 
 	public static final int aMillion = 1000 * 1000;
 
-	private static long _exitTimeStamp = -1;
+//	private static long _exitTimeStamp = -1;
 
-	// 非 UI 线程写文件：
-	class WriteXmlTask extends AsyncTask<Void, Void, Void> {
-		public WriteXmlTask() {
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			System.out.println("doInBackground()");
-			if (_captureSessionNode == null || _file == null
-					|| _persister == null) {
-				System.out
-						.println("_captureSessionNode==null || _file==null || _persister == null");
-				return null;
-			}
-
-			try {
-				_persister.write(_captureSessionNode, _file);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			System.out.println("onPostExecute");
-
-			super.onPostExecute(result);
-			// _savingDlg.hide(); //导致第二次 show 错误
-			_savingDlg.dismiss(); // √
-			_captureSessionNode.clearAllNodes();
-
-			// 居然一样：
-			// System.out.println("_file.getPath: " + _file.getPath());
-			// System.out.println("_file.getAbsolutePath: "
-			// + _file.getAbsolutePath());
-			// System.out.println("_file.getCanonicalPath: "
-			// + _file.getCanonicalPath());
-
-			Toast.makeText(HuaweiProj.this, "已存到: " + _file.getAbsolutePath(),
-					Toast.LENGTH_SHORT).show();
-		}
-
-	}// WriteXmlTask
 
 	// xml 存储
 	// String _fileName="huawei.xml"; //若不加绝对路径， 无权限写文件
@@ -538,100 +492,100 @@ public class HuaweiProj extends Activity {
 		super.onDestroy();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		System.out.println("onOptionsItemSelected");
-		int itemId = item.getItemId();
-
-		// System.out.println("itemId:= " + itemId);
-
-		switch (itemId) {
-		case android.R.id.home: // 应用左上角的图标， 非手机 home 键
-			System.out.println("android.R.id.home");
-			break;
-		case R.id.menu_settings:
-//			Toast.makeText(this, "no settings~~", Toast.LENGTH_SHORT).show();
-			SettingsDlg settingsDlg=new SettingsDlg(this);
-			settingsDlg.setOnDismissListener(new OnDismissListener() {
-				
-				public void onDismiss(DialogInterface dialog) {
-//					Toast.makeText(HuaweiProj.this, "settingsDlg...onDismiss", Toast.LENGTH_SHORT).show();
-					
-				}
-			});
-			settingsDlg.setTitle(R.string.settingsTitle);
-			settingsDlg.show();
-			break;
-		case R.id.menu_about:
-			Dialog aboutDlg = new Dialog(this) {
-
-				@Override
-				protected void onCreate(Bundle savedInstanceState) {
-					super.onCreate(savedInstanceState);
-					setContentView(R.layout.about_dlg);
-					TextView textViewAbout = (TextView) findViewById(R.id.textViewAbout);
-					textViewAbout.setText(Html
-							.fromHtml(getString(R.string.about_text)));
-					textViewAbout.setMovementMethod(LinkMovementMethod
-							.getInstance());
-				}
-
-			};
-			// aboutDlg.setContentView(R.layout.about_dlg);
-			aboutDlg.setTitle(R.string.aboutTitle);
-			// aboutDlg.setCancelable(false); // 不可手动取消
-			aboutDlg.show();
-
-			break;
-		case R.id.menu_debug:
-			Toast.makeText(this, _debugInfo, Toast.LENGTH_SHORT).show();
-			break;
-		case R.id.menuItemViewXml:
-			System.out.println("R.id.menuItemViewXml");
-
-			System.out.println(_fileName);
-			_file=new File(_fileName);
-			System.out.println("_file.exists():= " + _file.exists());
-
-			// 用默认程序打开 xml:
-			if (!_file.exists()) {
-				// _file.getAbsolutePath()
-				Toast.makeText(this, _file.getAbsolutePath() + " 可能尚未生成，或已被删除",
-						Toast.LENGTH_SHORT).show();
-				break;
-			}
-			Intent intent = new Intent();
-			intent.setAction(Intent.ACTION_VIEW);
-			// File file = new File(
-			// "/data/data/com.zhangxaochen.huaweiproj/curve.png");
-
-			// intent.setDataAndType(Uri.fromFile(file), "image/*");
-			intent.setDataAndType(Uri.fromFile(_file), "text/*");
-			startActivity(intent); // √
-			// startActivity(Intent.createChooser(intent, getResources()
-			// .getString(R.string.menuViewXml))); // √
-
-			break;
-
-		case R.id.menuItemViewCurve:
-			Intent intentViewCurve = new Intent(this, ViewCurveActivity.class);
-			intentViewCurve.putExtra(HuaweiProj.kSampleRate, _rate);
-
-			startActivity(intentViewCurve);
-			break;
-
-		default:
-			break;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.activity_main, menu);
+//		return true;
+//	}
+//
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		System.out.println("onOptionsItemSelected");
+//		int itemId = item.getItemId();
+//
+//		// System.out.println("itemId:= " + itemId);
+//
+//		switch (itemId) {
+//		case android.R.id.home: // 应用左上角的图标， 非手机 home 键
+//			System.out.println("android.R.id.home");
+//			break;
+//		case R.id.menu_settings:
+////			Toast.makeText(this, "no settings~~", Toast.LENGTH_SHORT).show();
+//			SettingsDlg settingsDlg=new SettingsDlg(this);
+//			settingsDlg.setOnDismissListener(new OnDismissListener() {
+//				
+//				public void onDismiss(DialogInterface dialog) {
+////					Toast.makeText(HuaweiProj.this, "settingsDlg...onDismiss", Toast.LENGTH_SHORT).show();
+//					
+//				}
+//			});
+//			settingsDlg.setTitle(R.string.settingsTitle);
+//			settingsDlg.show();
+//			break;
+//		case R.id.menu_about:
+//			Dialog aboutDlg = new Dialog(this) {
+//
+//				@Override
+//				protected void onCreate(Bundle savedInstanceState) {
+//					super.onCreate(savedInstanceState);
+//					setContentView(R.layout.about_dlg);
+//					TextView textViewAbout = (TextView) findViewById(R.id.textViewAbout);
+//					textViewAbout.setText(Html
+//							.fromHtml(getString(R.string.about_text)));
+//					textViewAbout.setMovementMethod(LinkMovementMethod
+//							.getInstance());
+//				}
+//
+//			};
+//			// aboutDlg.setContentView(R.layout.about_dlg);
+//			aboutDlg.setTitle(R.string.aboutTitle);
+//			// aboutDlg.setCancelable(false); // 不可手动取消
+//			aboutDlg.show();
+//
+//			break;
+//		case R.id.menu_debug:
+//			Toast.makeText(this, _debugInfo, Toast.LENGTH_SHORT).show();
+//			break;
+//		case R.id.menuItemViewXml:
+//			System.out.println("R.id.menuItemViewXml");
+//
+//			System.out.println(_fileName);
+//			_file=new File(_fileName);
+//			System.out.println("_file.exists():= " + _file.exists());
+//
+//			// 用默认程序打开 xml:
+//			if (!_file.exists()) {
+//				// _file.getAbsolutePath()
+//				Toast.makeText(this, _file.getAbsolutePath() + " 可能尚未生成，或已被删除",
+//						Toast.LENGTH_SHORT).show();
+//				break;
+//			}
+//			Intent intent = new Intent();
+//			intent.setAction(Intent.ACTION_VIEW);
+//			// File file = new File(
+//			// "/data/data/com.zhangxaochen.huaweiproj/curve.png");
+//
+//			// intent.setDataAndType(Uri.fromFile(file), "image/*");
+//			intent.setDataAndType(Uri.fromFile(_file), "text/*");
+//			startActivity(intent); // √
+//			// startActivity(Intent.createChooser(intent, getResources()
+//			// .getString(R.string.menuViewXml))); // √
+//
+//			break;
+//
+//		case R.id.menuItemViewCurve:
+//			Intent intentViewCurve = new Intent(this, ViewCurveActivity.class);
+//			intentViewCurve.putExtra(HuaweiProj.kSampleRate, _rate);
+//
+//			startActivity(intentViewCurve);
+//			break;
+//
+//		default:
+//			break;
+//		}
+//
+//		return super.onOptionsItemSelected(item);
+//	}
 
 	// 必须 public
 	public void on_buttonEnableCD_clicked(View view) {
@@ -661,7 +615,23 @@ public class HuaweiProj extends Activity {
 
 		_savingDlg.show();
 		_file = new File(_fileName);
-		new WriteXmlTask().execute();
+//		new WriteXmlTask().execute();
+		WriteXmlTask task=new WriteXmlTask(){
+			@Override
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				
+				_savingDlg.dismiss();
+				Toast.makeText(getApplicationContext(), 
+						"已存到: " + _file.getAbsolutePath(),
+						Toast.LENGTH_SHORT).show();
+			}
+		};
+		task.setCsNode(_captureSessionNode)
+		.setFile(_file)
+		.setPersister(_persister)
+		.execute();
+
 	}
 
 	public void on_toggleButtonSampling_clicked(View view) {
@@ -796,25 +766,25 @@ public class HuaweiProj extends Activity {
 		}
 	}
 
-	@Override
-	public void onBackPressed() {
-		// IME shown 的时候仍然检测不到 back key！！！！！！！
-		System.out.println("onBackPressed");
-
-		long curTime = SystemClock.uptimeMillis();
-
-		System.out.println("curTime:= " + curTime);
-
-		if (curTime - _exitTimeStamp < 1000) {
-			System.out.println("curTime - _exitTimeStamp < 1000");
-			super.onBackPressed(); // ==finish()
-			// finish();
-		} else {
-			Toast.makeText(this, "press BACK again to exit", Toast.LENGTH_SHORT)
-					.show();
-			_exitTimeStamp = curTime;
-		}
-	}
+//	@Override
+//	public void onBackPressed() {
+//		// IME shown 的时候仍然检测不到 back key！！！！！！！
+//		System.out.println("onBackPressed");
+//
+//		long curTime = SystemClock.uptimeMillis();
+//
+//		System.out.println("curTime:= " + curTime);
+//
+//		if (curTime - _exitTimeStamp < 1000) {
+//			System.out.println("curTime - _exitTimeStamp < 1000");
+//			super.onBackPressed(); // ==finish()
+//			// finish();
+//		} else {
+//			Toast.makeText(this, "press BACK again to exit", Toast.LENGTH_SHORT)
+//					.show();
+//			_exitTimeStamp = curTime;
+//		}
+//	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -823,4 +793,76 @@ public class HuaweiProj extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-}
+}//HuaweiProj
+
+// 非 UI 线程写文件：
+class WriteXmlTask extends AsyncTask<Void, Void, Void> {
+	CaptureSessionNode _captureSessionNode;
+	File _file;
+	Persister _persister;
+//	Activity _mainActivity;
+	
+	public WriteXmlTask() {
+	}
+	
+	public WriteXmlTask setCsNode(CaptureSessionNode csNode){
+		_captureSessionNode=csNode;
+		return this;
+	}
+	
+	public WriteXmlTask setFile(File file){
+		_file=file;
+		return this;
+	}
+	
+	public WriteXmlTask setPersister(Persister persister){
+		_persister=persister;
+		return this;
+	}
+	
+//	public WriteXmlTask setMainActivity(Activity activity){
+//		_mainActivity=activity;
+//		return this;
+//	}
+
+	@Override
+	protected Void doInBackground(Void... params) {
+		System.out.println("doInBackground()");
+		if (_captureSessionNode == null || _file == null
+				|| _persister == null) {
+			System.out
+					.println("_captureSessionNode==null || _file==null || _persister == null");
+			return null;
+		}
+
+		try {
+			_persister.write(_captureSessionNode, _file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	protected void onPostExecute(Void result) {
+		System.out.println("onPostExecute");
+
+		super.onPostExecute(result);
+		// _savingDlg.hide(); //导致第二次 show 错误
+//		_savingDlg.dismiss(); // √
+		_captureSessionNode.clearAllNodes();
+
+		// 居然一样：
+		// System.out.println("_file.getPath: " + _file.getPath());
+		// System.out.println("_file.getAbsolutePath: "
+		// + _file.getAbsolutePath());
+		// System.out.println("_file.getCanonicalPath: "
+		// + _file.getCanonicalPath());
+
+//		Toast.makeText(_mainActivity, "已存到: " + _file.getAbsolutePath(),
+//				Toast.LENGTH_SHORT).show();
+	}
+
+}// WriteXmlTask
+
+

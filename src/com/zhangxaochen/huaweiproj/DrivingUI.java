@@ -1,17 +1,23 @@
 package com.zhangxaochen.huaweiproj;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.stream.Format;
+
 import com.example.mysensorlistener.MySensorListener;
 import com.example.mysensorlistener.MySensorListener.MySensorData;
+import com.zhangxaochen.xmlParser.CaptureSessionNode;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,11 +28,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -40,7 +49,17 @@ import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class DrivingUI extends Activity {
+public class DrivingUI extends BaseActivity{
+	//----------------------xml data file
+//	String _fileName;
+//	String _fileName=Environment.getExternalStorageDirectory().getAbsolutePath()
+//			+File.separator+"huawei.xml";
+	CaptureSessionNode _captureSessionNode = new CaptureSessionNode();
+	File _file;
+	Format _format = new Format("<?xml version=\"1.0\" encoding= \"UTF-8\" ?>");
+	Persister _persister = new Persister(_format);
+
+	
 	//----------------------sensor
 	SensorManager _sm;
 	MySensorListener _listener=new MySensorListener();
@@ -56,7 +75,9 @@ public class DrivingUI extends Activity {
 	Set<String> _usersSet;
 	
 	//----------------------UI
-	MyRelativeLayout _relativeLayoutOptions;
+//	MyRelativeLayout _relativeLayoutOptions;
+//	MyLinearLayout _linearLayoutOptions;
+	
 	Switch _switchCd;
 	EditText _editTextCd;
 	Spinner _spinnerUsers;
@@ -71,10 +92,10 @@ public class DrivingUI extends Activity {
 	boolean _isCdEnabled=false;
 	int _cdDuration=0;
 	CountDownTimer _timer;
-	int _sampleRate=60;
+//	int _sampleRate=60;
 	final String _dataFolderName="huaweiproj-driving";
 	File _dataFolder;
-	private String _debugInfo;
+//	String _debugInfo;
 	
 	private void setUsersSpinner(){
 		if(_usersSet==null)
@@ -97,7 +118,7 @@ public class DrivingUI extends Activity {
 
 	// UI 组件实例化
 	void initWidgets() {
-		_relativeLayoutOptions=(MyRelativeLayout) findViewById(R.id.relativeLayoutOptions);
+//		_linearLayoutOptions=(MyLinearLayout) findViewById(R.id.linearLayoutOptions);
 		
 		_switchCd=(Switch) findViewById(R.id.switchCD);
 		_editTextCd=(EditText) findViewById(R.id.editTextCD);
@@ -178,7 +199,7 @@ public class DrivingUI extends Activity {
 		
 		//----------------------editTextAddUser
 		final EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);
-		System.out.println("editTextAddUser: "+editTextAddUser+", "+_addUserDlg);
+//		System.out.println("editTextAddUser: "+editTextAddUser+", "+_addUserDlg);
 		if (editTextAddUser !=null)
 		editTextAddUser.addTextChangedListener(new TextWatcher() {
 			
@@ -192,7 +213,7 @@ public class DrivingUI extends Activity {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				//TODO: 检查是否已经存在此用户名
+				//检查是否已经存在此用户名
 				boolean isExist=userExists(s.toString());
 				_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!isExist);
 				if(isExist)
@@ -206,7 +227,7 @@ public class DrivingUI extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO 添加到 spinner && prefs
+				//添加到 spinner && prefs
 				String uname=editTextAddUser.getText().toString();
 				if(_usersSet==null)
 					_usersSet=new HashSet<String>();
@@ -215,9 +236,14 @@ public class DrivingUI extends Activity {
 				_usersSet.add(uname);
 				setUsersSpinner();
 				
-				_spEditor=_sp.edit();
+//				_spEditor=_sp.edit();
+				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
+				_spEditor.remove(Consts.kUsers);
+				_spEditor.commit();//管用了
 				_spEditor.putStringSet(Consts.kUsers, _usersSet);
-				_spEditor.commit();
+				boolean putSuccess=_spEditor.commit();
+				System.out.println("putSuccess: "+putSuccess);
+				
 				
 				//dlg 居然不能自动 dismiss。。。
 				_addUserDlg.dismiss();
@@ -229,6 +255,7 @@ public class DrivingUI extends Activity {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				System.out.println("onCheckedChanged===========");
 				if(isChecked){
 //					final Dialog tickDlg=new Dialog(getBaseContext());
 					final Dialog tickDlg=new Dialog(DrivingUI.this);
@@ -286,7 +313,8 @@ public class DrivingUI extends Activity {
 				public void onFinish() {
 					System.out.println("onFinish");
 
-					stopSampling();
+//					stopSampling();
+					_toggleButtonSampling.setChecked(false);
 				}
 			};
 			_timer.start();
@@ -295,7 +323,8 @@ public class DrivingUI extends Activity {
 	}//startSampling
 	
 	private void uiStartSampling(){
-		_relativeLayoutOptions.disablePanel();
+//		_linearLayoutOptions.disablePanel();
+		_scrollViewOptions.setVisibility(View.GONE);
 		
 		if(VERSION.SDK_INT>VERSION_CODES.HONEYCOMB){
 			ActionBar bar=getActionBar();
@@ -305,6 +334,7 @@ public class DrivingUI extends Activity {
 	}
 	
 	private void stopSampling() {
+		System.out.println("in stopSampling======");
 		_mpStop.start();	//停止音乐
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
@@ -315,15 +345,73 @@ public class DrivingUI extends Activity {
 				+ mySensorData.getGbuf().size() + "\n" + "rbuf:\t"
 				+ mySensorData.getRbuf().size() + "\n";
 
-		
+		AlertDialog.Builder builder=new AlertDialog.Builder(this);
+		builder.setTitle("是否保存本次数据")
+		.setCancelable(false)
+		.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 加一条数据，
+				_captureSessionNode.addNode(mySensorData);
+				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+				
+				//数据存文件
+				int actId=_spinnerActions.getSelectedItemPosition();
+				System.out.println("actId: "+actId);
+				String uname=_spinnerUsers.getSelectedItem().toString();
+				_fileName=uname+"_a"+actId;
+
+				File dir=new File(_dataFolder.getAbsolutePath());
+//				for(String f:dir.list())
+//					System.out.println(f);
+				int fcnt=dir.list(new FilenameFilter() {
+					
+					@Override
+					public boolean accept(File dir, String filename) {
+						return filename.contains(_fileName)&&filename.endsWith(".xml");
+					}
+				}).length;
+				
+				_fileName=_dataFolder.getAbsolutePath()+File.separator
+						+_fileName+"_"+fcnt+".xml";
+				_file=new File(_fileName);
+				_savingDlg.show();
+				WriteXmlTask task=new WriteXmlTask(){
+					@Override
+					protected void onPostExecute(Void result) {
+						super.onPostExecute(result);
+						
+						_savingDlg.dismiss();
+						Toast.makeText(getApplicationContext(), 
+								"已存到: " + _file.getAbsolutePath(),
+								Toast.LENGTH_SHORT).show();
+					}
+				};
+				task.setCsNode(_captureSessionNode)
+				.setFile(_file)
+				.setPersister(_persister)
+				.execute();
+			}
+		})
+		.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+			}
+		} );
+		Dialog addNodeDlg=builder.create();
+		addNodeDlg.show();
 	}//stopSampling
 	
 	private void uiStopSampling() {
-		_toggleButtonSampling.setChecked(false);
+//		_toggleButtonSampling.setChecked(false);
 
 		if (_switchCd.isChecked()) // 重要！！
 			_editTextCd.setText("" + _cdDuration);
-		_relativeLayoutOptions.enablePanel();
+//		_linearLayoutOptions.enablePanel();
+		_scrollViewOptions.setVisibility(View.VISIBLE);
 	}
 
 	
@@ -348,10 +436,11 @@ public class DrivingUI extends Activity {
 	
 	void loadPrefs(){
 		_sp=this.getSharedPreferences(Consts.prefSettings, MODE_PRIVATE);
-//		_spEditor=_sp.edit();
+		_spEditor=_sp.edit();
 		
 		_usersSet=_sp.getStringSet(Consts.kUsers, null);
-		System.out.println("_usersSet: "+_usersSet);
+		System.out.println("_sp.getAll(): "+_sp.getAll());
+		System.out.println("loadPrefs:: _usersSet: "+_usersSet);
 	}
 	
 	
@@ -364,7 +453,7 @@ public class DrivingUI extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		System.out.println("onCreate~~~~~~~~~~~");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.driving_ui);
 		_sm=(SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
@@ -377,7 +466,13 @@ public class DrivingUI extends Activity {
 		loadPrefs();
 		initWidgets();
 		respondEvents();
-	}
-	
+	}//onCreate
+
+	@Override
+	protected void onDestroy() {
+		System.out.println("onDestroy================");
+		
+		super.onDestroy();
+	}//onDestroy
 
 }
