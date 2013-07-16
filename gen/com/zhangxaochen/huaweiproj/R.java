@@ -46,6 +46,10 @@ public final class R {
         public static final int getBufArrayAndClear=0x7f090014;
         public static final int getBufFrontBtn=0x7f090016;
         public static final int getBufRearBtn=0x7f090017;
+<<<<<<< HEAD
+=======
+        public static final int linearLayoutOptions=0x7f090027;
+>>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
         public static final int menuGroup_actionbar=0x7f090034;
         public static final int menuItemViewCurve=0x7f090036;
         public static final int menuItemViewXml=0x7f090035;
@@ -70,7 +74,11 @@ public final class R {
         public static final int relativeLayoutOptions=0x7f090026;
         public static final int relativeLayoutRoot=0x7f090001;
         public static final int scrollView=0x7f090013;
+<<<<<<< HEAD
         public static final int scrollViewOptions=0x7f090027;
+=======
+        public static final int scrollViewOptions=0x7f090026;
+>>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
         public static final int seekBarPreCd=0x7f090032;
         public static final int spinnerActions=0x7f09002e;
         public static final int spinnerSampleMode=0x7f090007;
@@ -124,10 +132,17 @@ public final class R {
         public static final int cn_enabled=0x7f05001a;
         public static final int cn_started=0x7f05001b;
         public static final int cn_stopped=0x7f05001c;
+<<<<<<< HEAD
         public static final int getBufArrayAndClear=0x7f050007;
         public static final int getBufFrontBtn=0x7f050005;
         public static final int getBufRearBtn=0x7f050006;
         public static final int getDataBtn=0x7f050004;
+=======
+        public static final int getBufArrayAndClear=0x7f050008;
+        public static final int getBufFrontBtn=0x7f050006;
+        public static final int getBufRearBtn=0x7f050007;
+        public static final int getDataBtn=0x7f050005;
+>>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
         public static final int hello_world=0x7f050001;
         public static final int menuViewCurve=0x7f050012;
         public static final int menuViewXml=0x7f050011;

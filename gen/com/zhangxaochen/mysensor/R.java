@@ -17,7 +17,16 @@ public final class R {
 		public static final int radioButtonSensorFastest = 0x7f09000f;
 		public static final int radioButtonSensorGame = 0x7f090010;
 		public static final int radioButtonSensorUi = 0x7f090011;
+<<<<<<< HEAD
 		public static final int radioGroupSensorRate = 0x7f09000e;
+=======
+		public static final int menu_settings = 0x7f090033;
+		public static final int radioButtonSensorFastest = 0x7f09000f;
+		public static final int myView = 0x7f090012;
+	}
+	public static final class style {
+		public static final int AppTheme = 0x7f060000;
+>>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
 	}
 	public static final class layout {
 		public static final int activity_my_sensor = 0x7f030002;
@@ -31,7 +40,13 @@ public final class R {
 		public static final int menu_settings = 0x7f050002;
 		public static final int title_activity_my_sensor = 0x7f050008;
 	}
+<<<<<<< HEAD
 	public static final class style {
 		public static final int AppTheme = 0x7f060000;
+=======
+	public static final class drawable {
+		public static final int ic_launcher = 0x7f020007;
+		public static final int ic_action_search = 0x7f020005;
+>>>>>>> 15415081ddc83e2993382aacdfbd96fea6813a6b
 	}
 }

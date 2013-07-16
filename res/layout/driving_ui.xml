@@ -7,21 +7,15 @@
     android:paddingRight="10dp"
     android:paddingTop="10dp" >
 
-<view
-    class="com.zhangxaochen.huaweiproj.MyRelativeLayout"
-    android:id="@+id/relativeLayoutOptions"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
-
     <ScrollView
         android:id="@+id/scrollViewOptions"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" >
+        android:layout_height="wrap_content" >
 
         <LinearLayout
+            android:id="@+id/linearLayoutOptions"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
@@ -51,8 +45,10 @@
                     android:ems="6"
                     android:enabled="false"
                     android:inputType="number"
-                    android:selectAllOnFocus="true" />
+                    android:selectAllOnFocus="true" >
 
+                    <requestFocus />
+                </EditText>
             </TableRow>
 
             <TextView
@@ -81,7 +77,6 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/button_add_user"
                     android:onClick="on_buttonAddUser_clicked" />
-
             </TableRow>
 
             <TextView
@@ -97,20 +92,16 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/more_item_press"
                 android:entries="@array/drivingActions" />
-
         </LinearLayout>
     </ScrollView>
-    
-</view>
 
     <ToggleButton
         android:id="@+id/toggleButtonSampling"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayoutOptions"
+        android:layout_below="@id/scrollViewOptions"
         android:layout_marginTop="20dp"
-        android:button="@drawable/add_user"
         android:textOff="@string/samplingOff"
         android:textOn="@string/samplingOn" />
 
