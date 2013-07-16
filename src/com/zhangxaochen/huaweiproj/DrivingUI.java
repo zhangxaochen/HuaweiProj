@@ -178,7 +178,7 @@ public class DrivingUI extends Activity {
 		
 		//----------------------editTextAddUser
 		final EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);
-		System.out.println("editTextAddUser: "+editTextAddUser+", "+_addUserDlg);
+//		System.out.println("editTextAddUser: "+editTextAddUser+", "+_addUserDlg);
 		if (editTextAddUser !=null)
 		editTextAddUser.addTextChangedListener(new TextWatcher() {
 			
@@ -216,8 +216,10 @@ public class DrivingUI extends Activity {
 				setUsersSpinner();
 				
 				_spEditor=_sp.edit();
+				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
 				_spEditor.putStringSet(Consts.kUsers, _usersSet);
 				_spEditor.commit();
+				
 				
 				//dlg 居然不能自动 dismiss。。。
 				_addUserDlg.dismiss();
@@ -351,7 +353,7 @@ public class DrivingUI extends Activity {
 //		_spEditor=_sp.edit();
 		
 		_usersSet=_sp.getStringSet(Consts.kUsers, null);
-		System.out.println("_usersSet: "+_usersSet);
+		System.out.println("loadPrefs:: _usersSet: "+_usersSet);
 	}
 	
 	
@@ -364,7 +366,7 @@ public class DrivingUI extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		System.out.println("onCreate~~~~~~~~~~~");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.driving_ui);
 		_sm=(SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
@@ -377,7 +379,16 @@ public class DrivingUI extends Activity {
 		loadPrefs();
 		initWidgets();
 		respondEvents();
+	}//onCreate
+
+	@Override
+	protected void onDestroy() {
+		System.out.println("onDestroy================");
+		
+		super.onDestroy();
 	}
+	
+	
 	
 
 }

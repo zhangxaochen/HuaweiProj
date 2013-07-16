@@ -35,6 +35,7 @@ public class CaptureSessionNode {
 		LinkedList<float[]> mbuf = sensorData.getMbuf();
 		LinkedList<float[]> rbuf = sensorData.getRbuf();
 		LinkedList<Long> tsbuf=sensorData.getTbuf();
+		System.out.println("abuf.size(), mbuf.size(): "+abuf.size()+", "+mbuf.size());
 
 		// 加一个 Node 节点：
 		NodeNode node = new NodeNode();
