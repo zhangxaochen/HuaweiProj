@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.simpleframework.xml.core.Persister;
@@ -37,7 +38,8 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -73,6 +75,7 @@ public class DrivingUI extends BaseActivity{
 	SharedPreferences _sp;
 	Editor _spEditor;
 	Set<String> _usersSet;
+	String _currentUser;
 	
 	//----------------------UI
 //	MyRelativeLayout _relativeLayoutOptions;
@@ -100,12 +103,19 @@ public class DrivingUI extends BaseActivity{
 	private void setUsersSpinner(){
 		if(_usersSet==null)
 			return;
+		ArrayList<String> usersList=new ArrayList<String>(_usersSet);
 		ArrayAdapter<String> usersArrayAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, new ArrayList<String>(
-						_usersSet));
+				android.R.layout.simple_spinner_item, usersList);
 		usersArrayAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		_spinnerUsers.setAdapter(usersArrayAdapter);
+		
+		String currentUser=_sp.getString(Consts.kCurrentUser, "");
+		if(!currentUser.isEmpty()){
+			_spinnerUsers.setSelection(usersList.indexOf(currentUser), true);	//× animate true 似乎没啥用。。 
+		}
+//		_spinnerUsers.select
+		
 	}
 	
 	private boolean userExists(String uname){
@@ -143,7 +153,34 @@ public class DrivingUI extends BaseActivity{
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder
 		.setTitle("请输入用户名")
-		.setPositiveButton("确定添加", null)
+		.setPositiveButton("确定添加", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//添加到 spinner && prefs
+				EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);	//√, 
+				String uname=editTextAddUser.getText().toString();
+				if(_usersSet==null)
+					_usersSet=new HashSet<String>();
+				if(_usersSet.contains(uname))
+					return;//其实此判断多余
+				_usersSet.add(uname);
+				
+				_spEditor.putString(Consts.kCurrentUser, uname);
+				_spEditor.commit();
+				
+				setUsersSpinner();
+				
+//				_spEditor=_sp.edit();
+				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
+				_spEditor.remove(Consts.kUsers);
+				_spEditor.commit();//管用了
+				_spEditor.putStringSet(Consts.kUsers, _usersSet);
+				boolean putSuccess=_spEditor.commit();
+				System.out.println("putSuccess: "+putSuccess);
+			}
+
+		})
 		.setView(getLayoutInflater().inflate(R.layout.add_user_dlg, null));
 		
 		_addUserDlg=builder.create();
@@ -194,6 +231,22 @@ public class DrivingUI extends BaseActivity{
 			}
 		});
 		
+		//--------------------------------_spinnerUsers，选中时顺便写到 prefs
+		_spinnerUsers.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				String uname=parent.getSelectedItem().toString();
+				_spEditor.putString(Consts.kCurrentUser, uname);
+				_spEditor.commit();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+		
 		//----------------------add user button clicked
 		//见 on_buttonAddUser_click()
 		
@@ -222,34 +275,32 @@ public class DrivingUI extends BaseActivity{
 			}
 		});
 		
-		//----------------------add user dialog positiveButton
-		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//添加到 spinner && prefs
-				String uname=editTextAddUser.getText().toString();
-				if(_usersSet==null)
-					_usersSet=new HashSet<String>();
-				if(_usersSet.contains(uname))
-					return;//其实此判断多余
-				_usersSet.add(uname);
-				setUsersSpinner();
-				
-//				_spEditor=_sp.edit();
-				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
-				_spEditor.remove(Consts.kUsers);
-				_spEditor.commit();//管用了
-				_spEditor.putStringSet(Consts.kUsers, _usersSet);
-				boolean putSuccess=_spEditor.commit();
-				System.out.println("putSuccess: "+putSuccess);
-				
-				
-				
-				//dlg 居然不能自动 dismiss。。。
-				_addUserDlg.dismiss();
-			}
-		});
+		//----------------------add user dialog positiveButton	移到了 initWidgets, 因为 View.OnClickListener 不好
+//		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				//添加到 spinner && prefs
+//				String uname=editTextAddUser.getText().toString();
+//				if(_usersSet==null)
+//					_usersSet=new HashSet<String>();
+//				if(_usersSet.contains(uname))
+//					return;//其实此判断多余
+//				_usersSet.add(uname);
+//				setUsersSpinner();
+//				
+////				_spEditor=_sp.edit();
+//				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
+//				_spEditor.remove(Consts.kUsers);
+//				_spEditor.commit();//管用了
+//				_spEditor.putStringSet(Consts.kUsers, _usersSet);
+//				boolean putSuccess=_spEditor.commit();
+//				System.out.println("putSuccess: "+putSuccess);
+//				
+//				//dlg 居然不能自动 dismiss。。。
+//				_addUserDlg.dismiss();
+//			}
+//		});
 		
 		//----------------------开始按钮
 		_toggleButtonSampling.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -295,6 +346,8 @@ public class DrivingUI extends BaseActivity{
 	private void startSampling(){
 		_mpStart.start();
 		uiStartSampling();
+		
+		_listener.reset();
 		_listener.registerWithSensorManager(_sm, Consts.aMillion/_sampleRate);
 		
 		if(_switchCd.isChecked()){
@@ -339,6 +392,7 @@ public class DrivingUI extends BaseActivity{
 		_mpStop.start();	//停止音乐
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
+//		_listener.resetTimestamp();
 
 		final MySensorData mySensorData = _listener.getSensorData();
 		_debugInfo = "abuf:\t" + mySensorData.getAbuf().size() + "\n"
@@ -363,10 +417,11 @@ public class DrivingUI extends BaseActivity{
 				String uname=_spinnerUsers.getSelectedItem().toString();
 				_fileName=uname+"_a"+actId;
 
-				File dir=new File(_dataFolder.getAbsolutePath());
+//				File dir=new File(_dataFolder.getAbsolutePath());
 //				for(String f:dir.list())
 //					System.out.println(f);
-				int fcnt=dir.list(new FilenameFilter() {
+//				int fcnt=dir.list(new FilenameFilter() {
+				int fcnt = _dataFolder.list(new FilenameFilter() {
 					
 					@Override
 					public boolean accept(File dir, String filename) {
@@ -441,6 +496,8 @@ public class DrivingUI extends BaseActivity{
 		
 		_usersSet=_sp.getStringSet(Consts.kUsers, null);
 		System.out.println("loadPrefs:: _usersSet: "+_usersSet);
+		
+		_currentUser=_sp.getString(Consts.kCurrentUser, "");
 	}
 	
 	
