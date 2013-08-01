@@ -1,5 +1,7 @@
 package com.zhangxaochen.huaweiproj;
 
+import com.example.mysensorlistener.Consts;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;

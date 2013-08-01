@@ -11,8 +11,9 @@ import org.simpleframework.xml.Root;
 
 import com.example.mysensorlistener.MySensorListener;
 
+
 @Root(name = "CaptureSession")
-public class CaptureSessionNode {
+public class CaptureSessionNode extends XmlRootNode{
 
 	/**
 	 * 似乎一个 CaptureSession 只有一个 Nodes 节点？
@@ -29,13 +30,19 @@ public class CaptureSessionNode {
 		// ...
 	}
 
+	@Override
 	public void addNode(MySensorListener.MySensorData sensorData) {
 		LinkedList<float[]> abuf = sensorData.getAbuf();
 		LinkedList<float[]> gbuf = sensorData.getGbuf();
 		LinkedList<float[]> mbuf = sensorData.getMbuf();
 		LinkedList<float[]> rbuf = sensorData.getRbuf();
-		LinkedList<Long> tsbuf=sensorData.getTbuf();
-		System.out.println("abuf.size(), mbuf.size(): "+abuf.size()+", "+mbuf.size());
+//		LinkedList<Long> tsbuf=sensorData.getTbuf();
+		
+		LinkedList<Double> aTsBuf=sensorData.getATsBuf();
+		LinkedList<Double> gTsBuf=sensorData.getGTsBuf();
+		LinkedList<Double> mTsBuf=sensorData.getMTsBuf();
+		LinkedList<Double> rTsBuf=sensorData.getRTsBuf();
+		
 
 		// 加一个 Node 节点：
 		NodeNode node = new NodeNode();
@@ -49,7 +56,7 @@ public class CaptureSessionNode {
 			node.datas.add(dataNode);
 
 			//设置时间戳：
-			dataNode.setTs(tsbuf.poll());
+//			dataNode.setTs(tsbuf.poll());
 			
 			float[] tuple;
 			tuple = abuf.poll();

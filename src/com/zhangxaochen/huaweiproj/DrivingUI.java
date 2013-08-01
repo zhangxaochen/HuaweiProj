@@ -5,20 +5,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.stream.Format;
 
-import com.example.mysensorlistener.MySensorListener;
-import com.example.mysensorlistener.MySensorListener.MySensorData;
-import com.zhangxaochen.xmlParser.CaptureSessionNode;
-
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,14 +22,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -51,12 +42,22 @@ import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.mysensorlistener.Consts;
+import com.example.mysensorlistener.MySensorListener;
+import com.example.mysensorlistener.MySensorListener.MySensorData;
+import com.zhangxaochen.xmlParser.CaptureSessionNode;
+import com.zhangxaochen.xmlParser.NewSessionNode;
+import com.zhangxaochen.xmlParser.XmlRootNode;
+
 public class DrivingUI extends BaseActivity{
 	//----------------------xml data file
 //	String _fileName;
 //	String _fileName=Environment.getExternalStorageDirectory().getAbsolutePath()
 //			+File.separator+"huawei.xml";
-	CaptureSessionNode _captureSessionNode = new CaptureSessionNode();
+	
+//	CaptureSessionNode _captureSessionNode = new CaptureSessionNode();
+	XmlRootNode _newSessionNode=new NewSessionNode();
+	
 	File _file;
 	Format _format = new Format("<?xml version=\"1.0\" encoding= \"UTF-8\" ?>");
 	Persister _persister = new Persister(_format);
@@ -350,6 +351,9 @@ public class DrivingUI extends BaseActivity{
 		_listener.reset();
 		_listener.registerWithSensorManager(_sm, Consts.aMillion/_sampleRate);
 		
+		((NewSessionNode)_newSessionNode).setBeginTime(System.currentTimeMillis()*Consts.MS2S);
+		System.out.println("setBeginTime: "+System.currentTimeMillis()*Consts.MS2S);
+		
 		if(_switchCd.isChecked()){
 			// 秒：
 			_cdDuration = Integer
@@ -392,7 +396,6 @@ public class DrivingUI extends BaseActivity{
 		_mpStop.start();	//停止音乐
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
-//		_listener.resetTimestamp();
 
 		final MySensorData mySensorData = _listener.getSensorData();
 		_debugInfo = "abuf:\t" + mySensorData.getAbuf().size() + "\n"
@@ -408,8 +411,12 @@ public class DrivingUI extends BaseActivity{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// 加一条数据，
-				_captureSessionNode.addNode(mySensorData);
-				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+//				_captureSessionNode.addNode(mySensorData);
+				_newSessionNode.addNode(mySensorData);
+				((NewSessionNode)_newSessionNode).setEndTime(System.currentTimeMillis()*Consts.MS2S);
+				System.out.println("setEndTime: "+System.currentTimeMillis()*Consts.MS2S);
+				
+//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 				
 				//数据存文件
 				int actId=_spinnerActions.getSelectedItemPosition();
@@ -444,7 +451,8 @@ public class DrivingUI extends BaseActivity{
 								Toast.LENGTH_SHORT).show();
 					}
 				};
-				task.setCsNode(_captureSessionNode)
+//				task.setCsNode(_captureSessionNode)
+				task.setXmlRootNode(_newSessionNode)
 				.setFile(_file)
 				.setPersister(_persister)
 				.execute();
@@ -454,7 +462,7 @@ public class DrivingUI extends BaseActivity{
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 			}
 		} );
 		Dialog addNodeDlg=builder.create();

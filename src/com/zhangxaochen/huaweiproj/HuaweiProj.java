@@ -9,21 +9,16 @@ import org.simpleframework.xml.stream.Format;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.DialogInterface.OnShowListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -31,32 +26,27 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
-import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.mysensorlistener.Consts;
 import com.example.mysensorlistener.MySensorListener;
 import com.example.mysensorlistener.MySensorListener.MySensorData;
 import com.zhangxaochen.xmlParser.CaptureSessionNode;
+import com.zhangxaochen.xmlParser.XmlRootNode;
 
 @SuppressLint("NewApi")
 public class HuaweiProj extends BaseActivity{
@@ -627,7 +617,8 @@ public class HuaweiProj extends BaseActivity{
 						Toast.LENGTH_SHORT).show();
 			}
 		};
-		task.setCsNode(_captureSessionNode)
+//		task.setCsNode(_captureSessionNode)
+		task.setXmlRootNode(_captureSessionNode)
 		.setFile(_file)
 		.setPersister(_persister)
 		.execute();
@@ -695,13 +686,13 @@ public class HuaweiProj extends BaseActivity{
 			public void onClick(DialogInterface dialog, int which) {
 				// 加一条数据，（还没存文件）
 				_captureSessionNode.addNode(mySensorData);
-				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 			}
 		})
 		.setNegativeButton("放弃", new OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
-				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 			}
 		} );
 		Dialog addNodeDlg=builder.create();
@@ -726,6 +717,8 @@ public class HuaweiProj extends BaseActivity{
 	private void startSampling(){
 		_mpStart.start();
 		uiStartSampling();
+		
+		_listener.reset();
 		_listener.registerWithSensorManager(_sm, aMillion / _rate);
 
 		if (_isCdEnabled) {
@@ -797,7 +790,8 @@ public class HuaweiProj extends BaseActivity{
 
 // 非 UI 线程写文件：
 class WriteXmlTask extends AsyncTask<Void, Void, Void> {
-	CaptureSessionNode _captureSessionNode;
+	XmlRootNode _xmlRootNode;
+//	CaptureSessionNode _captureSessionNode;
 	File _file;
 	Persister _persister;
 //	Activity _mainActivity;
@@ -805,8 +799,13 @@ class WriteXmlTask extends AsyncTask<Void, Void, Void> {
 	public WriteXmlTask() {
 	}
 	
-	public WriteXmlTask setCsNode(CaptureSessionNode csNode){
-		_captureSessionNode=csNode;
+//	public WriteXmlTask setCsNode(CaptureSessionNode csNode){
+//		_captureSessionNode=csNode;
+//		return this;
+//	}
+	
+	public WriteXmlTask setXmlRootNode(XmlRootNode rootNode){
+		_xmlRootNode=rootNode;
 		return this;
 	}
 	
@@ -828,15 +827,22 @@ class WriteXmlTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		System.out.println("doInBackground()");
-		if (_captureSessionNode == null || _file == null
+//		if (_captureSessionNode == null || _file == null
+//				|| _persister == null) {
+//			System.out
+//					.println("_captureSessionNode==null || _file==null || _persister == null");
+//			return null;
+//		}
+		if (_xmlRootNode == null || _file == null
 				|| _persister == null) {
 			System.out
-					.println("_captureSessionNode==null || _file==null || _persister == null");
+					.println("_xmlRootNode==null || _file==null || _persister == null");
 			return null;
 		}
 
 		try {
-			_persister.write(_captureSessionNode, _file);
+//			_persister.write(_captureSessionNode, _file);
+			_persister.write(_xmlRootNode, _file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -850,17 +856,11 @@ class WriteXmlTask extends AsyncTask<Void, Void, Void> {
 		super.onPostExecute(result);
 		// _savingDlg.hide(); //导致第二次 show 错误
 //		_savingDlg.dismiss(); // √
-		_captureSessionNode.clearAllNodes();
 
-		// 居然一样：
-		// System.out.println("_file.getPath: " + _file.getPath());
-		// System.out.println("_file.getAbsolutePath: "
-		// + _file.getAbsolutePath());
-		// System.out.println("_file.getCanonicalPath: "
-		// + _file.getCanonicalPath());
+//		_captureSessionNode.clearAllNodes();
+		_xmlRootNode.clear();
 
-//		Toast.makeText(_mainActivity, "已存到: " + _file.getAbsolutePath(),
-//				Toast.LENGTH_SHORT).show();
+		//TODO: to be overrided...
 	}
 
 }// WriteXmlTask
