@@ -114,6 +114,10 @@ public class NewSessionNode extends XmlRootNode{
 	@Override
 	public void clear(){
 		threadsNode.threadList.clear();
+		
+		threadCnt=0;
+		endTime=-1;
+		beginTime=-1;
 	}
 	
 	public double getBeginTime() {
