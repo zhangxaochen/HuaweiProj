@@ -101,6 +101,7 @@ public class DrivingUI extends BaseActivity{
 	File _dataFolder;
 //	String _debugInfo;
 	
+	//用 _userSet 重新填充 _spinnerUsers; 设置 currentUser
 	private void setUsersSpinner(){
 		if(_usersSet==null)
 			return;
@@ -116,7 +117,6 @@ public class DrivingUI extends BaseActivity{
 			_spinnerUsers.setSelection(usersList.indexOf(currentUser), true);	//× animate true 似乎没啥用。。 
 		}
 //		_spinnerUsers.select
-		
 	}
 	
 	private boolean userExists(String uname){
@@ -128,6 +128,9 @@ public class DrivingUI extends BaseActivity{
 	}
 
 	// UI 组件实例化
+	/**
+	 * 
+	 */
 	void initWidgets() {
 //		_linearLayoutOptions=(MyLinearLayout) findViewById(R.id.linearLayoutOptions);
 		
@@ -137,10 +140,15 @@ public class DrivingUI extends BaseActivity{
 		
 		_spinnerUsers=(Spinner) findViewById(R.id.spinnerUser);
 		setUsersSpinner();
+//		_spinnerUsers.getSelectedItem()==null?
 		
 		_buttonAddUser=(Button) findViewById(R.id.buttonAddUser);
 		_spinnerActions=(Spinner) findViewById(R.id.spinnerActions);
+		_spinnerActions.setSelection(_spinnerActions.getCount()-1);
 		_toggleButtonSampling=(ToggleButton) findViewById(R.id.toggleButtonSampling);
+		//首次安装， spinnerUser 为空， 则 disable 开始按钮
+		_toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
+		
 		
 		_scrollViewOptions=(ScrollView) findViewById(R.id.scrollViewOptions);
 		
@@ -171,6 +179,7 @@ public class DrivingUI extends BaseActivity{
 				_spEditor.commit();
 				
 				setUsersSpinner();
+				_toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
 				
 //				_spEditor=_sp.edit();
 				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
@@ -269,7 +278,7 @@ public class DrivingUI extends BaseActivity{
 			public void afterTextChanged(Editable s) {
 				//检查是否已经存在此用户名
 				boolean isExist=userExists(s.toString());
-				_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!isExist);
+				_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!isExist&&!s.toString().isEmpty());
 				if(isExist)
 					Toast.makeText(getApplicationContext(), 
 							"\""+s.toString()+"\" 已存在", Toast.LENGTH_SHORT).show();
@@ -421,6 +430,7 @@ public class DrivingUI extends BaseActivity{
 				//数据存文件
 				int actId=_spinnerActions.getSelectedItemPosition();
 				System.out.println("actId: "+actId);
+//				System.out.println(_spinnerUsers.getSelectedItem());
 				String uname=_spinnerUsers.getSelectedItem().toString();
 				_fileName=uname+"_a"+actId;
 
@@ -513,6 +523,12 @@ public class DrivingUI extends BaseActivity{
 		System.out.println("on_buttonAddUser_clicked");
 		
 		_addUserDlg.show();
+
+		//若文本框为空， disable 确定按钮
+		EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);	//√, 
+		String uname=editTextAddUser.getText().toString();
+System.out.println("uname.isEmpty(): "+uname.isEmpty());
+		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!uname.isEmpty());
 		
 	}
 	
