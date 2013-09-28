@@ -45,8 +45,8 @@ import android.widget.ToggleButton;
 import com.example.mysensorlistener.Consts;
 import com.example.mysensorlistener.MySensorListener;
 import com.example.mysensorlistener.MySensorListener.MySensorData;
-import com.zhangxaochen.xmlParser.CaptureSessionNode;
-import com.zhangxaochen.xmlParser.XmlRootNode;
+import com.zhangxaochen.sensordataxml.CaptureSessionNode;
+import com.zhangxaochen.sensordataxml.XmlRootNode;
 
 @SuppressLint("NewApi")
 public class HuaweiProj extends BaseActivity{

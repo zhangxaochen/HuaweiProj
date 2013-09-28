@@ -25,7 +25,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -45,9 +44,8 @@ import android.widget.ToggleButton;
 import com.example.mysensorlistener.Consts;
 import com.example.mysensorlistener.MySensorListener;
 import com.example.mysensorlistener.MySensorListener.MySensorData;
-import com.zhangxaochen.xmlParser.CaptureSessionNode;
-import com.zhangxaochen.xmlParser.NewSessionNode;
-import com.zhangxaochen.xmlParser.XmlRootNode;
+import com.zhangxaochen.sensordataxml.NewSessionNode;
+import com.zhangxaochen.sensordataxml.XmlRootNode;
 
 public class DrivingUI extends BaseActivity{
 	//----------------------xml data file
