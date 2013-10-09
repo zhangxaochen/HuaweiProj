@@ -154,6 +154,7 @@ public class DrivingUI extends BaseActivity{
 		_savingDlg.setContentView(R.layout.saving_dlg);
 		_savingDlg.setTitle(R.string.savingTitle);
 		_savingDlg.setCancelable(false);
+
 		
 		
 		//----------------------add user dialog
@@ -405,76 +406,96 @@ public class DrivingUI extends BaseActivity{
 		_listener.unregisterWithSensorManager(_sm);
 
 		final MySensorData mySensorData = _listener.getSensorData();
-		_debugInfo = "abuf:\t" + mySensorData.getAbuf().size() + "\n"
-				+ "mbuf:\t" + mySensorData.getMbuf().size() + "\n" + "gbuf:\t"
-				+ mySensorData.getGbuf().size() + "\n" + "rbuf:\t"
-				+ mySensorData.getRbuf().size() + "\n";
+		int asz=mySensorData.getAbuf().size();
+		int gsz=mySensorData.getGbuf().size();
+		int msz=mySensorData.getMbuf().size();
+		int rsz=mySensorData.getRbuf().size();
+		
+		_debugInfo = "abuf:\t" + asz + "\n"
+				+ "mbuf:\t" + msz + "\n" + "gbuf:\t"
+				+ gsz + "\n" + "rbuf:\t"
+				+ rsz + "\n";
 
-		AlertDialog.Builder builder=new AlertDialog.Builder(this);
-		builder.setTitle("是否保存本次数据")
-		.setCancelable(false)
-		.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+		if(asz*gsz*msz*rsz==0){
+			String errMsg="ERROR: 某传感元件数据丢失!\n"+_debugInfo;
+//			Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
+			AlertDialog.Builder builder=new AlertDialog.Builder(this);
+			builder
+			.setTitle("传感器故障！")
+			.setMessage(errMsg)
+			.setNegativeButton("放弃本次采集", null);
 			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// 加一条数据，
-//				_captureSessionNode.addNode(mySensorData);
-				_newSessionNode.addNode(mySensorData);
-				((NewSessionNode)_newSessionNode).setEndTime(System.currentTimeMillis()*Consts.MS2S);
-				System.out.println("setEndTime: "+System.currentTimeMillis()*Consts.MS2S);
-				
-//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
-				
-				//数据存文件
-				int actId=_spinnerActions.getSelectedItemPosition();
-				System.out.println("actId: "+actId);
-//				System.out.println(_spinnerUsers.getSelectedItem());
-				String uname=_spinnerUsers.getSelectedItem().toString();
-				_fileName=uname+"_a"+actId;
+			Dialog errDlg=builder.create();
+			errDlg.show();
 
-//				File dir=new File(_dataFolder.getAbsolutePath());
-//				for(String f:dir.list())
-//					System.out.println(f);
-//				int fcnt=dir.list(new FilenameFilter() {
-				int fcnt = _dataFolder.list(new FilenameFilter() {
+		}
+		else{
+			AlertDialog.Builder builder=new AlertDialog.Builder(this);
+			builder.setTitle("是否保存本次数据")
+			.setCancelable(false)
+			.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// 加一条数据，
+//					_captureSessionNode.addNode(mySensorData);
+					_newSessionNode.addNode(mySensorData);
+					((NewSessionNode)_newSessionNode).setEndTime(System.currentTimeMillis()*Consts.MS2S);
+					System.out.println("setEndTime: "+System.currentTimeMillis()*Consts.MS2S);
 					
-					@Override
-					public boolean accept(File dir, String filename) {
-						return filename.contains(_fileName)&&filename.endsWith(".xml");
-					}
-				}).length;
-				
-				_fileName=_dataFolder.getAbsolutePath()+File.separator
-						+_fileName+"_"+fcnt+".xml";
-				_file=new File(_fileName);
-				_savingDlg.show();
-				WriteXmlTask task=new WriteXmlTask(){
-					@Override
-					protected void onPostExecute(Void result) {
-						super.onPostExecute(result);
+//					mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+					
+					//数据存文件
+					int actId=_spinnerActions.getSelectedItemPosition();
+					System.out.println("actId: "+actId);
+//					System.out.println(_spinnerUsers.getSelectedItem());
+					String uname=_spinnerUsers.getSelectedItem().toString();
+					_fileName=uname+"_a"+actId;
+
+//					File dir=new File(_dataFolder.getAbsolutePath());
+//					for(String f:dir.list())
+//						System.out.println(f);
+//					int fcnt=dir.list(new FilenameFilter() {
+					int fcnt = _dataFolder.list(new FilenameFilter() {
 						
-						_savingDlg.dismiss();
-						Toast.makeText(getApplicationContext(), 
-								"已存到: " + _file.getAbsolutePath(),
-								Toast.LENGTH_SHORT).show();
-					}
-				};
-//				task.setCsNode(_captureSessionNode)
-				task.setXmlRootNode(_newSessionNode)
-				.setFile(_file)
-				.setPersister(_persister)
-				.execute();
-			}
-		})
-		.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-//				mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
-			}
-		} );
-		Dialog addNodeDlg=builder.create();
-		addNodeDlg.show();
+						@Override
+						public boolean accept(File dir, String filename) {
+							return filename.contains(_fileName)&&filename.endsWith(".xml");
+						}
+					}).length;
+					
+					_fileName=_dataFolder.getAbsolutePath()+File.separator
+							+_fileName+"_"+fcnt+".xml";
+					_file=new File(_fileName);
+					_savingDlg.show();
+					WriteXmlTask task=new WriteXmlTask(){
+						@Override
+						protected void onPostExecute(Void result) {
+							super.onPostExecute(result);
+							
+							_savingDlg.dismiss();
+							Toast.makeText(getApplicationContext(), 
+									"已存到: " + _file.getAbsolutePath(),
+									Toast.LENGTH_SHORT).show();
+						}
+					};
+//					task.setCsNode(_captureSessionNode)
+					task.setXmlRootNode(_newSessionNode)
+					.setFile(_file)
+					.setPersister(_persister)
+					.execute();
+				}
+			})
+			.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+//					mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
+				}
+			} );
+			Dialog addNodeDlg=builder.create();
+			addNodeDlg.show();
+		}
 	}//stopSampling
 	
 	private void uiStopSampling() {
