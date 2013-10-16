@@ -53,6 +53,10 @@
             <item >启动加速</item>
             <item >刹车制动</item>
             <item >转弯</item><item>混合动作</item>
+            <item >左手</item>
+            <item >右手</item>
+            <item >左裤口袋</item>
+            <item >右裤口袋</item>
         </string-array>
         <string name="cn_started">已启动</string>
         <string name="cn_stopped">已停止</string>
