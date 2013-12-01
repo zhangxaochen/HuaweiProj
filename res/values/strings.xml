@@ -48,16 +48,24 @@
         <string name="settingsTitle">程序设置</string>
         <string name="cn_disabled">已禁用</string>
         <string name="cn_enabled">已启用</string>
+
         <string-array name="drivingActions">
+            <item>D)启动加速</item>
+            <item>D)刹车制动</item>
+            <item>D)转弯</item>
+            <item>D)混合动作</item>
+            <item>W)左手</item>
+            <item>W)右手</item>
+            <item>W)左上衣兜</item>
+            <item>W)右上衣兜</item>
+            <item>W)左裤口袋</item>
+            <item>W)右裤口袋</item>
+            <item>D)平稳驾驶</item>
+            <item>D)左转弯</item>
+            <item>D)右转弯</item>
             
-            <item >启动加速</item>
-            <item >刹车制动</item>
-            <item >转弯</item><item>混合动作</item>
-            <item >左手</item>
-            <item >右手</item>
-            <item >左裤口袋</item>
-            <item >右裤口袋</item>
         </string-array>
+
         <string name="cn_started">已启动</string>
         <string name="cn_stopped">已停止</string>
         <string-array name="NullArray"></string-array>
