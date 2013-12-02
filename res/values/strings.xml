@@ -50,20 +50,12 @@
         <string name="cn_enabled">已启用</string>
 
         <string-array name="drivingActions">
-            <item>D)启动加速</item>
-            <item>D)刹车制动</item>
-            <item>NAN</item>
-            <item>D)混合动作</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>D)平稳驾驶</item>
-            <item>D)左转弯</item>
-            <item>D)右转弯</item>
-            
+            <item>加速</item>
+            <item>减速</item>
+            <item>左转</item>
+            <item>右转</item>
+            <item>平稳驾驶</item>
+            <item>混合动作</item>
         </string-array>
 
         <string name="cn_started">已启动</string>

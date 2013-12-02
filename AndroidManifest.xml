@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".DrivingUI"
+            android:name="com.zhangxaochen.huaweiproj.DrivingUI"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             </intent-filter>
              -->
         </activity>
-        <activity android:name=".ViewCurveActivity" >
+        <activity android:name="com.zhangxaochen.huaweiproj.ViewCurveActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

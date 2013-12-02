@@ -245,7 +245,7 @@ public class DrivingUI extends BaseActivity{
 					return;
 				}
 				
-				int value=Integer.parseInt(s.toString());
+//				int value=Integer.parseInt(s.toString());
 				// _toggleButtonSampling.setEnabled(value!=0);
 				setToggleBtnState();
 			}
