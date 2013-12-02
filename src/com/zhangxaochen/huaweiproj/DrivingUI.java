@@ -457,7 +457,6 @@ public class DrivingUI extends BaseActivity{
 //						System.out.println(f);
 //					int fcnt=dir.list(new FilenameFilter() {
 					int fcnt = _dataFolder.list(new FilenameFilter() {
-						
 						@Override
 						public boolean accept(File dir, String filename) {
 							return filename.contains(_fileName)&&filename.endsWith(".xml");
@@ -474,9 +473,39 @@ public class DrivingUI extends BaseActivity{
 							super.onPostExecute(result);
 							
 							_savingDlg.dismiss();
-							Toast.makeText(getApplicationContext(), 
-									"已存到: " + _file.getAbsolutePath(),
-									Toast.LENGTH_SHORT).show();
+							
+							//===================检查数据存储xml的完整性
+							boolean fileIntegrity=true;
+//							try {
+////								_file=new File("/mnt/sdcard/huaweiproj-driving/dailyLX_a9_1.xml");
+//								_persister.read(_newSessionNode.getClass(), _file);
+//							} catch (Exception e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//								
+//								fileIntegrity=false;
+//								_file.delete();
+//								
+//								//捕获异常，这里最可能是文件不完整导致， javax.xml.stream.XMLStreamException
+//								//Message: XML 文档结构必须从头至尾包含在同一个实体内。
+//								AlertDialog.Builder builder= new AlertDialog.Builder(DrivingUI.this);
+//								builder.setTitle("保存错误！");
+//								builder.setMessage("由于文件保存不完整，已删除此数据！");
+//								builder.setCancelable(false);
+//								builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//									@Override
+//									public void onClick(DialogInterface dialog, int which) {
+//									}
+//								});
+//								Dialog dlg=builder.create();
+//								dlg.show();								
+//							}
+							
+							if(fileIntegrity){
+								Toast.makeText(getApplicationContext(), 
+										"已存到: " + _file.getAbsolutePath(),
+										Toast.LENGTH_SHORT).show();
+							}
 						}
 					};
 //					task.setCsNode(_captureSessionNode)
