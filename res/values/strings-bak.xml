@@ -52,14 +52,14 @@
         <string-array name="drivingActions">
             <item>D)启动加速</item>
             <item>D)刹车制动</item>
-            <item>NAN</item>
+            <item>D)转弯</item>
             <item>D)混合动作</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
-            <item>NAN</item>
+            <item>W)左手</item>
+            <item>W)右手</item>
+            <item>W)左上衣兜</item>
+            <item>W)右上衣兜</item>
+            <item>W)左裤口袋</item>
+            <item>W)右裤口袋</item>
             <item>D)平稳驾驶</item>
             <item>D)左转弯</item>
             <item>D)右转弯</item>

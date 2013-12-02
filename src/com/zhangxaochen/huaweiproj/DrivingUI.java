@@ -48,6 +48,8 @@ import com.zhangxaochen.sensordataxml.NewSessionNode;
 import com.zhangxaochen.sensordataxml.XmlRootNode;
 
 public class DrivingUI extends BaseActivity{
+	final String nan="NAN";
+	
 	//----------------------xml data file
 //	String _fileName;
 //	String _fileName=Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -145,7 +147,13 @@ public class DrivingUI extends BaseActivity{
 		_spinnerActions.setSelection(_spinnerActions.getCount()-1);
 		_toggleButtonSampling=(ToggleButton) findViewById(R.id.toggleButtonSampling);
 		//首次安装， spinnerUser 为空， 则 disable 开始按钮
-		_toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
+		// _toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
+		
+		//如果 spinnerAction text==NAN， 则 disable 开始按钮
+		Toast.makeText(this, _spinnerActions.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+		
+		// _toggleButtonSampling.setEnabled(_spinnerActions.getSelectedItem().toString()!=nan);
+		setToggleBtnState();
 		
 		
 		_scrollViewOptions=(ScrollView) findViewById(R.id.scrollViewOptions);
@@ -178,7 +186,8 @@ public class DrivingUI extends BaseActivity{
 				_spEditor.commit();
 				
 				setUsersSpinner();
-				_toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
+				// _toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
+				setToggleBtnState();
 				
 //				_spEditor=_sp.edit();
 				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
@@ -208,11 +217,12 @@ public class DrivingUI extends BaseActivity{
 				
 				_editTextCd.setEnabled(isChecked);
 				_switchCd.setText(getString(isChecked?R.string.cn_enabled:R.string.cn_disabled));
-				int cdDt=Integer.parseInt(_editTextCd.getText().toString());
-				if(isChecked && cdDt==0)
-					_toggleButtonSampling.setEnabled(false);
-				else
-					_toggleButtonSampling.setEnabled(true);
+				// int cdDt=Integer.parseInt(_editTextCd.getText().toString());
+				// if(isChecked && cdDt==0)
+					// _toggleButtonSampling.setEnabled(false);
+				// else
+					// _toggleButtonSampling.setEnabled(true);
+				setToggleBtnState();
 //				_editTextCd.performClick(); // 无法控制输入法弹出与否
 			}
 		});
@@ -236,7 +246,8 @@ public class DrivingUI extends BaseActivity{
 				}
 				
 				int value=Integer.parseInt(s.toString());
-				_toggleButtonSampling.setEnabled(value!=0);
+				// _toggleButtonSampling.setEnabled(value!=0);
+				setToggleBtnState();
 			}
 		});
 		
@@ -249,6 +260,25 @@ public class DrivingUI extends BaseActivity{
 				String uname=parent.getSelectedItem().toString();
 				_spEditor.putString(Consts.kCurrentUser, uname);
 				_spEditor.commit();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+		
+		//--------------------------spinnerActions	如果 text==NAN, disable 开始按钮
+		_spinnerActions.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				String actionName=parent.getSelectedItem().toString();
+				Toast.makeText(DrivingUI.this, actionName, Toast.LENGTH_SHORT).show();
+				System.out.println("----------------"+actionName+", "+_spinnerActions.getSelectedItem().toString().length());
+				// if(actionName.contains(nan) )
+					// _toggleButtonSampling.setEnabled(false);
+				setToggleBtnState();
 			}
 
 			@Override
@@ -579,6 +609,22 @@ System.out.println("uname.isEmpty(): "+uname.isEmpty());
 		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!uname.isEmpty());
 		
 	}
+	
+	//toggleButtonSampling enable 状态设置
+	void setToggleBtnState(){
+		//判断条件： spinnerUser ==null？ spinnerActions ==nan？ cd isChecked && cdDt==0？
+		boolean isChecked=_switchCd.isChecked();
+		int cdDt=Integer.parseInt(_editTextCd.getText().toString());
+		if(_spinnerUsers.getSelectedItem()==null ||
+				_spinnerActions.getSelectedItem().toString().contains(nan) ||
+				(isChecked && cdDt==0)
+				){
+			_toggleButtonSampling.setEnabled(false);
+		}
+		else
+			_toggleButtonSampling.setEnabled(true);
+				
+	}//setToggleBtnState
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
