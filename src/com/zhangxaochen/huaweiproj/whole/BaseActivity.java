@@ -1,6 +1,7 @@
-package com.zhangxaochen.huaweiproj;
+package com.zhangxaochen.huaweiproj.whole;
 
 import java.io.File;
+
 
 import android.app.Activity;
 import android.app.AlertDialog;

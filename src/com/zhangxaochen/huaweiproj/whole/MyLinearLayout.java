@@ -1,25 +1,25 @@
-package com.zhangxaochen.huaweiproj;
+package com.zhangxaochen.huaweiproj.whole;
 
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
-public class MyRelativeLayout extends RelativeLayout {
+public class MyLinearLayout extends LinearLayout {
 
 	private ArrayList<Boolean> childrenEnabled=new ArrayList<Boolean>();
 
-	public MyRelativeLayout(Context context) {
+	public MyLinearLayout(Context context) {
 		super(context);
 	}
 
-	public MyRelativeLayout(Context context, AttributeSet attrs) {
+	public MyLinearLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public MyRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
+	public MyLinearLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 

@@ -1,4 +1,4 @@
-package com.zhangxaochen.huaweiproj;
+package com.zhangxaochen.huaweiproj.whole;
 
 import android.app.Activity;
 import android.content.Context;

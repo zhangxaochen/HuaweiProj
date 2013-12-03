@@ -1,4 +1,4 @@
-package com.zhangxaochen.huaweiproj;
+package com.zhangxaochen.huaweiproj.whole;
 
 import com.example.mysensorlistener.Consts;
 
