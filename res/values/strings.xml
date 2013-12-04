@@ -63,6 +63,7 @@
             <item>D)平稳驾驶</item>
             <item>D)左转弯</item>
             <item>D)右转弯</item>
+            <item>W)静止</item>
             
         </string-array>
 
