@@ -97,7 +97,7 @@ public class DrivingUI extends BaseActivity{
 	int _cdDuration=0;
 	CountDownTimer _timer;
 //	int _sampleRate=60;
-	final String _dataFolderName="huaweiproj-driving";
+	final String _dataFolderName="huaweiproj-whole";
 	File _dataFolder;
 //	String _debugInfo;
 	
