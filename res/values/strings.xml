@@ -64,6 +64,7 @@
             <item>D)左转弯</item>
             <item>D)右转弯</item>
             <item>W)静止</item>
+            <item>F)摔倒</item>
             
         </string-array>
 
