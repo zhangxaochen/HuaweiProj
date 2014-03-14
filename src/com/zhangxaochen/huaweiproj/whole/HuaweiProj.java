@@ -2,10 +2,15 @@ package com.zhangxaochen.huaweiproj.whole;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.stream.Format;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -673,10 +678,52 @@ public class HuaweiProj extends BaseActivity{
 		// System.out.println("mbuf: "+mySensorData.getMbuf().size());
 		// System.out.println("gbuf: "+mySensorData.getGbuf().size());
 		// System.out.println("rbuf: "+mySensorData.getRbuf().size());
-		_debugInfo = "abuf:\t" + mySensorData.getAbuf().size() + "\n"
-				+ "mbuf:\t" + mySensorData.getMbuf().size() + "\n" + "gbuf:\t"
-				+ mySensorData.getGbuf().size() + "\n" + "rbuf:\t"
-				+ mySensorData.getRbuf().size() + "\n";
+		
+		LinkedList<float[]> abuf=mySensorData.getAbuf();
+		LinkedList<float[]> gbuf=mySensorData.getGbuf();
+		LinkedList<float[]> mbuf=mySensorData.getMbuf();
+		LinkedList<float[]> rbuf=mySensorData.getRbuf();
+		
+				
+		_debugInfo = "abuf:\t" + abuf.size() + "\n"
+					+ "gbuf:\t"	+ gbuf.size() + "\n" 
+					+ "mbuf:\t" + mbuf.size() + "\n" 
+					+ "rbuf:\t"	+ rbuf.size() + "\n";
+		
+		List<Integer> bufSizes=Arrays.asList(abuf.size(), gbuf.size(), mbuf.size(), rbuf.size());
+		if (Collections.min(bufSizes)<Collections.max(bufSizes)/2.0)
+			_debugInfo+="!!! some buf size too small\n";
+		
+		LinkedList<Double> ats=mySensorData.getATsBuf();
+		LinkedList<Double> gts=mySensorData.getGTsBuf();
+		LinkedList<Double> mts=mySensorData.getMTsBuf();
+		LinkedList<Double> rts=mySensorData.getRTsBuf();
+		
+		List<Double> tss=Arrays.asList(ats.peek(), gts.peek(), mts.peek(), rts.peek());
+		_debugInfo+="ats:\t"+ats.peek()+"\n"
+				+"gts:\t"+gts.peek()+"\n"
+				+"mts:\t"+mts.peek()+"\n"
+				+"rts:\t"+rts.peek()+"\n";
+		
+		if(Collections.max(tss)-Collections.min(tss)>24*3600)
+			_debugInfo+="!!! TimeStamp are not consistent\n";
+		
+		double afps=ats.size()*1./(ats.peekLast()-ats.peek()),
+				gfps=gts.size()*1./(gts.peekLast()-gts.peek()),
+				mfps=mts.size()*1./(mts.peekLast()-mts.peek()),
+				rfps=rts.size()*1./(rts.peekLast()-rts.peek());
+		
+		_debugInfo+="afps:\t"+afps+"\n"
+					+"gfps:\t"+gfps+"\n"
+					+"mfps:\t"+mfps+"\n"
+					+"rfps:\t"+rfps+"\n";
+		
+		if(Collections.min(Arrays.asList(afps, gfps, mfps, rfps))<30)
+			_debugInfo+="!!! low FPS\n";
+		
+			
+		
+		
 
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder.setTitle("是否保存本次数据")

@@ -42,7 +42,7 @@
         <item>emotion</item>
     </string-array>
         <string name="menu_about">About</string>
-        <string name="aboutTitle">关于程序</string>
+        <string name="aboutTitle">关于程序 v1.7.7</string>
         <string name="about_text">本程序用于离线采集传感器数据，使用说明&lt;a href="http://baidu.com">见这里&lt;/a>。&lt;br/>如需帮助，请联系：zhangxaochen@163.com</string>
         <string name="menu_debug">debug info</string>
         <string name="settingsTitle">程序设置</string>

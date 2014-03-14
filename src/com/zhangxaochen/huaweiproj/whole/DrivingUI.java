@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.simpleframework.xml.core.Persister;
@@ -442,10 +446,45 @@ public class DrivingUI extends BaseActivity{
 		int rsz=mySensorData.getRbuf().size();
 		
 		_debugInfo = "abuf:\t" + asz + "\n"
-				+ "mbuf:\t" + msz + "\n" + "gbuf:\t"
-				+ gsz + "\n" + "rbuf:\t"
-				+ rsz + "\n";
+					+ "mbuf:\t" + msz + "\n" 
+					+ "gbuf:\t" + gsz + "\n" 
+					+ "rbuf:\t" + rsz + "\n";
 
+		List<Integer> bufSizes=Arrays.asList(asz, gsz, msz, rsz);
+		if (Collections.min(bufSizes)<Collections.max(bufSizes)/2.0)
+			_debugInfo+="!!! some buf size too small\n";
+		
+		LinkedList<Double> ats=mySensorData.getATsBuf();
+		LinkedList<Double> gts=mySensorData.getGTsBuf();
+		LinkedList<Double> mts=mySensorData.getMTsBuf();
+		LinkedList<Double> rts=mySensorData.getRTsBuf();
+
+//		调试用：
+//		ats.offerFirst(86400.);
+		
+		List<Double> tss=Arrays.asList(ats.peek(), gts.peek(), mts.peek(), rts.peek());
+		_debugInfo+=String.format("%-5s\t%.2f", "ats:", ats.peek())+"\n"
+				+String.format("%-5s\t%.2f", "gts:", gts.peek())+"\n"
+				+String.format("%-5s\t%.2f", "mts:", mts.peek())+"\n"
+				+String.format("%-5s\t\t%.2f", "rts:", rts.peek())+"\n";
+		
+		if(Collections.max(tss)-Collections.min(tss)>24*3600)
+			_debugInfo+="!!! TimeStamp are not consistent\n";
+		
+		double afps=ats.size()*1./(ats.peekLast()-ats.peek()),
+				gfps=gts.size()*1./(gts.peekLast()-gts.peek()),
+				mfps=mts.size()*1./(mts.peekLast()-mts.peek()),
+				rfps=rts.size()*1./(rts.peekLast()-rts.peek());
+		
+		_debugInfo+="afps:\t"+String.format("%.2f", afps)+"\n"
+					+"gfps:\t"+String.format("%.2f", gfps)+"\n"
+					+"mfps:\t"+String.format("%.2f", mfps)+"\n"
+					+"rfps:\t"+String.format("%.2f", rfps)+"\n";
+		
+		if(Collections.min(Arrays.asList(afps, gfps, mfps, rfps))<30)
+			_debugInfo+="!!! low FPS\n";
+
+		
 		if(asz*gsz*msz*rsz==0){
 			String errMsg="ERROR: 某传感元件数据丢失!\n"+_debugInfo;
 //			Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();

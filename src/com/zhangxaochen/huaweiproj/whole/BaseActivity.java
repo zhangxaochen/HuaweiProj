@@ -140,7 +140,7 @@ public class BaseActivity extends Activity {
 
 			break;
 		case R.id.menu_debug:
-			Toast.makeText(this, _debugInfo, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, _debugInfo, Toast.LENGTH_LONG).show();
 			break;
 		case R.id.menuItemViewXml:
 			System.out.println("R.id.menuItemViewXml");
