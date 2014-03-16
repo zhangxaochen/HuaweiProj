@@ -32,17 +32,15 @@
 
     <string name="textViewSampleMode">采样时所处模式（即，文件名前缀）：</string>
 
-    <string-array name="actionModes">
-        <item>focus</item>
-        <item>theater</item>
-        <item>running</item>
-        <item>outdoor</item>
-        <item>driving</item>
-        <item>fallingDown</item>
-        <item>emotion</item>
+    <string-array name="actionTypes">
+        <item>a) 驾驶</item>
+        <item>b) 行走</item>
+        <item>c) 跑步</item>
+        <item>d) 摔倒</item>
+        <item>e) 日常</item>
     </string-array>
         <string name="menu_about">About</string>
-        <string name="aboutTitle">关于程序 v1.7.7</string>
+        <string name="aboutTitle">关于程序 v1.8.0</string>
         <string name="about_text">本程序用于离线采集传感器数据，使用说明&lt;a href="http://baidu.com">见这里&lt;/a>。&lt;br/>如需帮助，请联系：zhangxaochen@163.com</string>
         <string name="menu_debug">debug info</string>
         <string name="settingsTitle">程序设置</string>
@@ -70,6 +68,46 @@
 
         <string name="cn_started">已启动</string>
         <string name="cn_stopped">已停止</string>
-        <string-array name="NullArray"></string-array>
+        <string-array name="actDrive">
+            <item >0) 加速</item>
+            <item >1) 减速</item>
+            <item >2) 左转弯</item>
+            <item >3) 右转弯</item>
+            <item >4) 平稳驾驶</item>
+            <item >5) 混合数据</item>
+        </string-array>
+        <string-array name="devicePosition">
+            <item >0) 左手</item>
+            <item >1) 右手</item>
+            <item >2) 左衣兜</item>
+            <item >3) 右衣兜</item>
+            <item >4) 左裤兜</item>
+            <item >5) 右裤兜</item>
+            <item >6) 背包</item>
+            <item >7) 车内静置</item>
+        </string-array>
+        <string-array name="actFall">
+            <item >0) 向前，膝盖跪倒</item>
+            <item >1) 向前，水平趴伏</item>
+            <item >2) 向左，水平摔</item>
+            <item >3) 向右，水平摔</item>
+            <item >4) 后仰，坐地</item>
+            <item >5) 后仰，躺倒</item>
+        </string-array>
+        <string-array name="actDaily">
+            <item >0) 坐着玩手机</item>
+            <item >1) 坐着抖腿</item>
+            <item >2) 从靠椅、凳子上面起身</item>
+            <item >3) 坐到靠椅、凳子</item>
+            <item >4) 弯腰捡起地上的东西然后起身</item>
+            <item >5) 躺倒床上</item>
+            <item >6) 从床上爬起来</item>
+        </string-array>
+        <string-array name="actWalkRun">
+            <item >0) 平地</item>
+            <item >1) 上楼梯</item>
+            <item >2) 下楼梯</item>
+        </string-array>
 
 </resources>
+

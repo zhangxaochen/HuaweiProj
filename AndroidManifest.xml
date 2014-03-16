@@ -16,6 +16,7 @@
         <activity
             android:name=".DrivingUI"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.stream.Format;
@@ -79,8 +78,10 @@ public class DrivingUI extends BaseActivity{
 	//----------------------prefs
 	SharedPreferences _sp;
 	Editor _spEditor;
-	Set<String> _usersSet;
+	TreeSet<String> _usersSet;
 	String _currentUser;
+	int _curActType, _curPosition, _curAction;
+	
 	
 	//----------------------UI
 //	MyRelativeLayout _relativeLayoutOptions;
@@ -90,6 +91,8 @@ public class DrivingUI extends BaseActivity{
 	EditText _editTextCd;
 	Spinner _spinnerUsers;
 	Button _buttonAddUser;
+	Spinner _spinnerActType;
+	Spinner _spinnerPosition;
 	Spinner _spinnerActions;
 	ToggleButton _toggleButtonSampling;
 	ScrollView _scrollViewOptions;
@@ -128,7 +131,7 @@ public class DrivingUI extends BaseActivity{
 		if(_usersSet==null)
 			return false;
 		
-		return _usersSet.contains(uname);
+		return _usersSet.contains(uname.toLowerCase());
 	}
 
 	// UI 组件实例化
@@ -147,14 +150,23 @@ public class DrivingUI extends BaseActivity{
 //		_spinnerUsers.getSelectedItem()==null?
 		
 		_buttonAddUser=(Button) findViewById(R.id.buttonAddUser);
+		
+		_spinnerActType=(Spinner) findViewById(R.id.spinnerActTypes);
+		_spinnerActType.setSelection(_curActType, true);
+		
+		_spinnerPosition=(Spinner) findViewById(R.id.spinnerPosition);
+		_spinnerPosition.setSelection(_curPosition, true);
+		
 		_spinnerActions=(Spinner) findViewById(R.id.spinnerActions);
-		_spinnerActions.setSelection(_spinnerActions.getCount()-1);
+//		_spinnerActions.setSelection(_spinnerActions.getCount()-1); //默认置为 “混合数据”
+		_spinnerActions.setSelection(_curAction, true);
+		
 		_toggleButtonSampling=(ToggleButton) findViewById(R.id.toggleButtonSampling);
 		//首次安装， spinnerUser 为空， 则 disable 开始按钮
 		// _toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
 		
 		//如果 spinnerAction text==NAN， 则 disable 开始按钮
-		Toast.makeText(this, _spinnerActions.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, _spinnerActions.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
 		
 		// _toggleButtonSampling.setEnabled(_spinnerActions.getSelectedItem().toString()!=nan);
 		setToggleBtnState();
@@ -172,7 +184,7 @@ public class DrivingUI extends BaseActivity{
 		//----------------------add user dialog
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder
-		.setTitle("请输入用户名")
+		.setTitle("请输入用户名(大小写不敏感)")
 		.setPositiveButton("确定添加", new DialogInterface.OnClickListener() {
 			
 			@Override
@@ -181,7 +193,7 @@ public class DrivingUI extends BaseActivity{
 				EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);	//√, 
 				String uname=editTextAddUser.getText().toString();
 				if(_usersSet==null)
-					_usersSet=new HashSet<String>();
+					_usersSet=new TreeSet<String>();
 				if(_usersSet.contains(uname))
 					return;//其实此判断多余
 				_usersSet.add(uname);
@@ -193,7 +205,6 @@ public class DrivingUI extends BaseActivity{
 				// _toggleButtonSampling.setEnabled(_spinnerUsers.getSelectedItem()!=null);
 				setToggleBtnState();
 				
-//				_spEditor=_sp.edit();
 				System.out.println("BUTTON_POSITIVE:: _usersSet: "+_usersSet);
 				_spEditor.remove(Consts.kUsers);
 				_spEditor.commit();//管用了
@@ -220,7 +231,7 @@ public class DrivingUI extends BaseActivity{
 				System.out.println("_switchCd.onCheckedChanged");
 				
 				_editTextCd.setEnabled(isChecked);
-				_switchCd.setText(getString(isChecked?R.string.cn_enabled:R.string.cn_disabled));
+				_switchCd.setText(DrivingUI.this.getString(isChecked?R.string.cn_enabled:R.string.cn_disabled));
 				// int cdDt=Integer.parseInt(_editTextCd.getText().toString());
 				// if(isChecked && cdDt==0)
 					// _toggleButtonSampling.setEnabled(false);
@@ -249,7 +260,7 @@ public class DrivingUI extends BaseActivity{
 					return;
 				}
 				
-				int value=Integer.parseInt(s.toString());
+				// int value=Integer.parseInt(s.toString());
 				// _toggleButtonSampling.setEnabled(value!=0);
 				setToggleBtnState();
 			}
@@ -262,8 +273,8 @@ public class DrivingUI extends BaseActivity{
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				String uname=parent.getSelectedItem().toString();
-				_spEditor.putString(Consts.kCurrentUser, uname);
-				_spEditor.commit();
+				 _spEditor.putString(Consts.kCurrentUser, uname);
+				 _spEditor.commit();
 			}
 
 			@Override
@@ -271,7 +282,54 @@ public class DrivingUI extends BaseActivity{
 			}
 		});
 		
-		//--------------------------spinnerActions	如果 text==NAN, disable 开始按钮
+		// --------------------------------_spinnerActType，选中时顺便写到 prefs
+		_spinnerActType.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				String actTypeName=parent.getSelectedItem().toString();
+				Toast.makeText(DrivingUI.this, actTypeName+position, Toast.LENGTH_SHORT).show();
+				
+				//set the 2nd sublevel spinner content accordingly:
+				int[] resids = { R.array.actDrive, 
+						R.array.actWalkRun, 
+						R.array.actWalkRun, 
+						R.array.actFall, 
+						R.array.actDaily
+						};
+				
+				ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+						DrivingUI.this, resids[position], android.R.layout.simple_spinner_item);
+				adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				_spinnerActions.setAdapter(adapter);
+				
+				_spEditor.putInt(Consts.kCurActType, position);
+				_spEditor.commit();
+			}//onItemSelected
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+			
+		});
+		
+		// --------------------------------_spinnerActType，选中时顺便写到 prefs
+		_spinnerPosition.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				_spEditor.putInt(Consts.kCurPosition, position);
+				_spEditor.commit();
+			}//onItemSelected
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+		});
+		
+		//--------------------------spinnerActions	如果 text==NAN, disable 开始按钮, 选中时顺便写到 prefs
 		_spinnerActions.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -283,7 +341,10 @@ public class DrivingUI extends BaseActivity{
 				// if(actionName.contains(nan) )
 					// _toggleButtonSampling.setEnabled(false);
 				setToggleBtnState();
-			}
+				
+				_spEditor.putInt(Consts.kCurAction, position);
+				_spEditor.commit();
+			}//onItemSelected
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
@@ -514,12 +575,13 @@ public class DrivingUI extends BaseActivity{
 					
 //					mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
 					
-					//数据存文件
-					int actId=_spinnerActions.getSelectedItemPosition();
-					System.out.println("actId: "+actId);
-//					System.out.println(_spinnerUsers.getSelectedItem());
-					String uname=_spinnerUsers.getSelectedItem().toString();
-					_fileName=uname+"_a"+actId;
+					//数据存文件, 构造文件名：
+					_currentUser=_sp.getString(Consts.kCurrentUser, "");
+					_curActType=_sp.getInt(Consts.kCurActType, 0);
+					_curPosition=_sp.getInt(Consts.kCurPosition, 0);
+					_curAction=_sp.getInt(Consts.kCurAction, 0);
+
+					_fileName=_currentUser+"_"+"abcde".charAt(_curActType)+"_"+_curPosition+"_"+_curAction;
 
 //					File dir=new File(_dataFolder.getAbsolutePath());
 //					for(String f:dir.list())
@@ -629,10 +691,15 @@ public class DrivingUI extends BaseActivity{
 		_sp=this.getSharedPreferences(Consts.prefSettings, MODE_PRIVATE);
 		_spEditor=_sp.edit();
 		
-		_usersSet=_sp.getStringSet(Consts.kUsers, null);
+		_usersSet=new TreeSet<String>();
+		_usersSet.addAll( _sp.getStringSet(Consts.kUsers, null));
 		System.out.println("loadPrefs:: _usersSet: "+_usersSet);
 		
 		_currentUser=_sp.getString(Consts.kCurrentUser, "");
+		
+		_curActType=_sp.getInt(Consts.kCurActType, 0);
+		_curPosition=_sp.getInt(Consts.kCurPosition, 0);
+		_curAction=_sp.getInt(Consts.kCurAction, 0);
 	}
 	
 	
@@ -644,8 +711,12 @@ public class DrivingUI extends BaseActivity{
 		//若文本框为空， disable 确定按钮
 		EditText editTextAddUser=(EditText) _addUserDlg.findViewById(R.id.editTextAddUser);	//√, 
 		String uname=editTextAddUser.getText().toString();
-System.out.println("uname.isEmpty(): "+uname.isEmpty());
-		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!uname.isEmpty());
+		System.out.println("uname.isEmpty(): " + uname.isEmpty());
+		if(uname.isEmpty())
+			_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+
+//		_addUserDlg.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+//				!uname.isEmpty() && !_usersSet.contains(uname.toLowerCase()));
 		
 	}
 	

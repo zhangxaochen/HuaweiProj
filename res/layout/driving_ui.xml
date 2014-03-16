@@ -47,7 +47,6 @@
                     android:inputType="number"
                     android:selectAllOnFocus="true" >
 
-                    <requestFocus />
                 </EditText>
             </TableRow>
 
@@ -66,17 +65,63 @@
 
                 <Spinner
                     android:id="@+id/spinnerUser"
-                    android:layout_width="240dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
+                    android:layout_weight="80"
+                    android:background="@drawable/more_item_press"
                     android:entries="@array/NullArray" />
 
                 <Button
                     android:id="@+id/buttonAddUser"
-                    android:layout_width="match_parent"
+                    android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/button_add_user"
                     android:onClick="on_buttonAddUser_clicked" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="动作类型" />
+
+                <TextView
+                    android:id="@+id/textViewPosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:text="放置位置" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tab4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <Spinner
+                    android:id="@+id/spinnerActTypes"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:background="@drawable/more_item_press"
+                    android:entries="@array/actionTypes" />
+
+                <Spinner
+                    android:id="@+id/spinnerPosition"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:background="@drawable/more_item_press"
+                    android:entries="@array/devicePosition" />
+
             </TableRow>
 
             <TextView
@@ -84,6 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_weight="50"
                 android:text="采样动作：" />
 
             <Spinner
@@ -91,7 +137,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/more_item_press"
-                android:entries="@array/drivingActions" />
+                android:entries="@array/actDrive" />
+
         </LinearLayout>
     </ScrollView>
 
