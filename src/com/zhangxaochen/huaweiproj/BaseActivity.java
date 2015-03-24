@@ -10,6 +10,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +25,8 @@ import android.widget.Toast;
 
 public class BaseActivity extends Activity {
 	static long _exitTimeStamp = -1;
-	int _sampleRate=60;
+//	int _sampleRate=60;
+	int _sampleRate=SensorManager.SENSOR_DELAY_FASTEST;
 	String _debugInfo;
 	String _fileName=Environment.getExternalStorageDirectory().getAbsolutePath()
 			+File.separator+"huawei.xml";

@@ -387,7 +387,10 @@ public class DrivingUI extends BaseActivity{
 		uiStartSampling();
 		
 		_listener.reset();
-		_listener.registerWithSensorManager(_sm, Consts.aMillion/_sampleRate);
+		boolean regSucceed = _listener.registerWithSensorManager(_sm, _sampleRate<4 ? _sampleRate : Consts.aMillion/_sampleRate);
+		System.out.println("---------------regSucceed: "+regSucceed);
+		if(!regSucceed)
+			Toast.makeText(this, "!regSucceed", Toast.LENGTH_SHORT).show();
 		
 		((NewSessionNode)_newSessionNode).setBeginTime(System.currentTimeMillis()*Consts.MS2S);
 		System.out.println("setBeginTime: "+System.currentTimeMillis()*Consts.MS2S);

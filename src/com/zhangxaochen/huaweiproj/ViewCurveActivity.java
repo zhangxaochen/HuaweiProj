@@ -45,7 +45,7 @@ public class ViewCurveActivity extends Activity {
 				_myViewCurve.setGap(_sensorType);
 				
 				_sm.unregisterListener(_myViewCurve);
-				_sm.registerListener(_myViewCurve, _sm.getDefaultSensor(_sensorType), HuaweiProj.aMillion/_sampleRate);
+				_sm.registerListener(_myViewCurve, _sm.getDefaultSensor(_sensorType), _sampleRate<4 ? _sampleRate: HuaweiProj.aMillion/_sampleRate);
 				
 				Toast.makeText(ViewCurveActivity.this, "_sensorType, _sampleRate:= "+_sensorType+", "+_sampleRate, Toast.LENGTH_SHORT).show();
 			}
@@ -97,7 +97,7 @@ public class ViewCurveActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
-		System.out.println("onResume");
+		System.out.println("ViewCurveActivity.onResume, _sampleRate: "+_sampleRate);
 		_sm.registerListener(_myViewCurve, _sm.getDefaultSensor(_sensorType), _sampleRate);
 
 	}

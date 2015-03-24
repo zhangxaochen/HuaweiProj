@@ -720,6 +720,7 @@ public class HuaweiProj extends BaseActivity{
 		
 		_listener.reset();
 		_listener.registerWithSensorManager(_sm, aMillion / _rate);
+//		_listener.registerWithSensorManager(_sm, SensorManager.SENSOR_DELAY_FASTEST);
 
 		if (_isCdEnabled) {
 			// √Î£∫
