@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
@@ -25,6 +26,8 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -50,6 +53,10 @@ import com.zhangxaochen.sensordataxml.XmlRootNode;
 public class DrivingUI extends BaseActivity{
 	final String nan="NAN";
 	
+	//2015-4-8 11:14:27
+	private boolean _stopSaving = false;
+	MySensorData _mySensorData;
+	
 	//----------------------xml data file
 //	String _fileName;
 //	String _fileName=Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -66,6 +73,9 @@ public class DrivingUI extends BaseActivity{
 	//----------------------sensor
 	SensorManager _sm;
 	MySensorListener _listener=new MySensorListener();
+	
+	//2015-4-8 10:46:40
+	TelephonyManager _tManager;
 	
 	//----------------------audio
 	MediaPlayer _mpTick;
@@ -438,18 +448,22 @@ public class DrivingUI extends BaseActivity{
 		uiStopSampling();
 		_listener.unregisterWithSensorManager(_sm);
 
-		final MySensorData mySensorData = _listener.getSensorData();
-		int asz=mySensorData.getAbuf().size();
-		int gsz=mySensorData.getGbuf().size();
-		int msz=mySensorData.getMbuf().size();
-		int rsz=mySensorData.getRbuf().size();
+//		final MySensorData mySensorData = _listener.getSensorData();
+		_mySensorData = _listener.getSensorData();
+		int asz=_mySensorData.getAbuf().size();
+		int gsz=_mySensorData.getGbuf().size();
+		int msz=_mySensorData.getMbuf().size();
+		int rsz=_mySensorData.getRbuf().size();
+		
+		int bsssSz = _mySensorData.getBSSSbuf().size();
 		
 		_debugInfo = "abuf:\t" + asz + "\n"
-				+ "mbuf:\t" + msz + "\n" + "gbuf:\t"
-				+ gsz + "\n" + "rbuf:\t"
-				+ rsz + "\n";
+				+ "mbuf:\t" + msz + "\n" 
+				+ "gbuf:\t" + gsz + "\n" 
+				+ "rbuf:\t" + rsz + "\n"
+				+ "bsssBuf:\t" + bsssSz + "\n";
 
-		if(asz*gsz*msz*rsz==0){
+		if(asz*gsz*msz*rsz==0){ //判断IMU运动传感器是否采到了数据
 			String errMsg="ERROR: 某传感元件数据丢失!\n"+_debugInfo;
 //			Toast.makeText(this, errMsg, Toast.LENGTH_SHORT).show();
 			AlertDialog.Builder builder=new AlertDialog.Builder(this);
@@ -460,55 +474,79 @@ public class DrivingUI extends BaseActivity{
 			
 			Dialog errDlg=builder.create();
 			errDlg.show();
-
 		}
-		else{
-			AlertDialog.Builder builder=new AlertDialog.Builder(this);
-			builder.setTitle("是否保存本次数据")
-			.setCancelable(false)
-			.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+		//2015-4-8 11:04:23
+		else if (bsssSz==0) {//判断gsm信号采集是否成功， 若失败，提示（不强制）放弃
+				String errMsg="ERROR: 手机信号强度获取失败！\n"+_debugInfo;
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder
+				.setTitle("信号强度故障！")
+				.setMessage(errMsg)
+				.setNegativeButton("放弃本次采集", null)
+				.setPositiveButton("继续保存", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						// TODO Auto-generated method stub
+						showSavingDlg();
+					}
+				});
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// 加一条数据，
+				Dialog errDlg = builder.create();
+				errDlg.show();
+		}//else if (bsssSz==0)
+		else{//若IMU、 BSSS均正常
+			showSavingDlg();
+		}// else
+	}//stopSampling
+	
+	//之前的 if(!_stopSaving) 块移到这里
+	void showSavingDlg(){
+		AlertDialog.Builder builder=new AlertDialog.Builder(this);
+		builder.setTitle("是否保存本次数据")
+		.setCancelable(false)
+		.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 加一条数据，
 //					_captureSessionNode.addNode(mySensorData);
-					_newSessionNode.addNode(mySensorData);
-					((NewSessionNode)_newSessionNode).setEndTime(System.currentTimeMillis()*Consts.MS2S);
-					System.out.println("setEndTime: "+System.currentTimeMillis()*Consts.MS2S);
-					
+				_newSessionNode.addNode(_mySensorData);
+				((NewSessionNode)_newSessionNode).setEndTime(System.currentTimeMillis()*Consts.MS2S);
+				System.out.println("setEndTime: "+System.currentTimeMillis()*Consts.MS2S);
+				
 //					mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
-					
-					//数据存文件
-					int actId=_spinnerActions.getSelectedItemPosition();
-					System.out.println("actId: "+actId);
+				
+				//数据存文件
+				int actId=_spinnerActions.getSelectedItemPosition();
+				System.out.println("actId: "+actId);
 //					System.out.println(_spinnerUsers.getSelectedItem());
-					String uname=_spinnerUsers.getSelectedItem().toString();
-					_fileName=uname+"_a"+actId;
+				String uname=_spinnerUsers.getSelectedItem().toString();
+				_fileName=uname+"_a"+actId;
 
 //					File dir=new File(_dataFolder.getAbsolutePath());
 //					for(String f:dir.list())
 //						System.out.println(f);
 //					int fcnt=dir.list(new FilenameFilter() {
-					int fcnt = _dataFolder.list(new FilenameFilter() {
-						@Override
-						public boolean accept(File dir, String filename) {
-							return filename.contains(_fileName)&&filename.endsWith(".xml");
-						}
-					}).length;
-					
-					_fileName=_dataFolder.getAbsolutePath()+File.separator
-							+_fileName+"_"+fcnt+".xml";
-					_file=new File(_fileName);
-					_savingDlg.show();
-					WriteXmlTask task=new WriteXmlTask(){
-						@Override
-						protected void onPostExecute(Void result) {
-							super.onPostExecute(result);
-							
-							_savingDlg.dismiss();
-							
-							//===================检查数据存储xml的完整性
-							boolean fileIntegrity=true;
+				int fcnt = _dataFolder.list(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String filename) {
+						return filename.contains(_fileName)&&filename.endsWith(".xml");
+					}
+				}).length;
+				
+				_fileName=_dataFolder.getAbsolutePath()+File.separator
+						+_fileName+"_"+fcnt+".xml";
+				_file=new File(_fileName);
+				_savingDlg.show();
+				WriteXmlTask task=new WriteXmlTask(){
+					@Override
+					protected void onPostExecute(Void result) {
+						super.onPostExecute(result);
+						
+						_savingDlg.dismiss();
+						
+						//===================检查数据存储xml的完整性
+						boolean fileIntegrity=true;
 //							try {
 ////								_file=new File("/mnt/sdcard/huaweiproj-driving/dailyLX_a9_1.xml");
 //								_persister.read(_newSessionNode.getClass(), _file);
@@ -533,32 +571,32 @@ public class DrivingUI extends BaseActivity{
 //								Dialog dlg=builder.create();
 //								dlg.show();								
 //							}
-							
-							if(fileIntegrity){
-								Toast.makeText(getApplicationContext(), 
-										"已存到: " + _file.getAbsolutePath(),
-										Toast.LENGTH_SHORT).show();
-							}
+						
+						if(fileIntegrity){
+							Toast.makeText(getApplicationContext(), 
+									"已存到: " + _file.getAbsolutePath(),
+									Toast.LENGTH_SHORT).show();
 						}
-					};
+					}
+				};
 //					task.setCsNode(_captureSessionNode)
-					task.setXmlRootNode(_newSessionNode)
-					.setFile(_file)
-					.setPersister(_persister)
-					.execute();
-				}
-			})
-			.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
+				task.setXmlRootNode(_newSessionNode)
+				.setFile(_file)
+				.setPersister(_persister)
+				.execute();
+			}
+		})
+		.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 //					mySensorData.clearAllBuf(); // 连那些没用到的 buf 也清空，以免内存泄露
-				}
-			} );
-			Dialog addNodeDlg=builder.create();
-			addNodeDlg.show();
-		}
-	}//stopSampling
+			}
+		} );
+		Dialog addNodeDlg=builder.create();
+		addNodeDlg.show();
+
+	}//showSavingDlg
 	
 	private void uiStopSampling() {
 //		_toggleButtonSampling.setChecked(false);
@@ -586,7 +624,7 @@ public class DrivingUI extends BaseActivity{
 		}
 		
 		AudioManager am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)/2, 0);
+//		am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)/2, 0);
 	}
 	
 	void loadPrefs(){
@@ -635,6 +673,17 @@ System.out.println("uname.isEmpty(): "+uname.isEmpty());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.driving_ui);
 		_sm=(SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		
+		//2015-4-8 10:47:31
+		_tManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+		_listener.setTelephonyManager(_tManager);
+		
+		System.out.println("---------------_tManager: "+_tManager);
+		GsmCellLocation location = (GsmCellLocation) _tManager.getCellLocation();
+		System.out.println("---------------location: "+location);
+		int cid = location.getCid();
+		System.out.println("---------------cid: "+cid);
+
 		
 		_dataFolder=Environment.getExternalStoragePublicDirectory(_dataFolderName);
 		if(!_dataFolder.exists()){
