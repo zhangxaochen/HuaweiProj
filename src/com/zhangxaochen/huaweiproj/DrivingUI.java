@@ -12,6 +12,7 @@ import org.simpleframework.xml.stream.Format;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -676,14 +677,32 @@ System.out.println("uname.isEmpty(): "+uname.isEmpty());
 		
 		//2015-4-8 10:47:31
 		_tManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-		_listener.setTelephonyManager(_tManager);
-		
-		System.out.println("---------------_tManager: "+_tManager);
-		GsmCellLocation location = (GsmCellLocation) _tManager.getCellLocation();
-		System.out.println("---------------location: "+location);
-		int cid = location.getCid();
-		System.out.println("---------------cid: "+cid);
-
+		boolean hasIccCard = _tManager.hasIccCard();
+		System.out.println("_tManager.hasIccCard(): "+ hasIccCard);
+		if(hasIccCard){
+			_listener.setTelephonyManager(_tManager);
+			
+			System.out.println("---------------_tManager: "+_tManager);
+			GsmCellLocation location = (GsmCellLocation) _tManager.getCellLocation();
+			System.out.println("---------------location: "+location);
+			int cid = location.getCid();
+			System.out.println("---------------cid: "+cid);
+}
+		else {
+			Builder builder = new Builder(this);
+			builder
+			.setTitle("未插入SIM卡")
+			.setMessage("hasIccCard==false, 点击“继续”以采集IMU数据；点击“退出”退出程序。")
+			.setPositiveButton("继续", null)
+			.setNegativeButton("退出", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					System.exit(-1);
+				}
+			});
+			Dialog noIccCardDlg = builder.create();
+			noIccCardDlg.show();
+		}
 		
 		_dataFolder=Environment.getExternalStoragePublicDirectory(_dataFolderName);
 		if(!_dataFolder.exists()){
