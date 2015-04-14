@@ -31,6 +31,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -52,6 +53,7 @@ import com.zhangxaochen.sensordataxml.NewSessionNode;
 import com.zhangxaochen.sensordataxml.XmlRootNode;
 
 public class DrivingUI extends BaseActivity{
+	private static final String TAG = "DrivingUI";
 	final String nan="NAN";
 	
 	//2015-4-8 11:14:27
@@ -399,6 +401,9 @@ public class DrivingUI extends BaseActivity{
 		
 		_listener.reset();
 		boolean regSucceed = _listener.registerWithSensorManager(_sm, _sampleRate<4 ? _sampleRate : Consts.aMillion/_sampleRate);
+		//2015-4-13 22:29:21
+		_listener._allowStoreData = true;
+		
 		System.out.println("---------------regSucceed: "+regSucceed);
 		if(!regSucceed)
 			Toast.makeText(this, "!regSucceed", Toast.LENGTH_SHORT).show();
@@ -670,6 +675,7 @@ System.out.println("uname.isEmpty(): "+uname.isEmpty());
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "---------------onCreate");
 		System.out.println("onCreate~~~~~~~~~~~");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.driving_ui);
@@ -687,7 +693,7 @@ System.out.println("uname.isEmpty(): "+uname.isEmpty());
 			System.out.println("---------------location: "+location);
 			int cid = location.getCid();
 			System.out.println("---------------cid: "+cid);
-}
+		}
 		else {
 			Builder builder = new Builder(this);
 			builder
